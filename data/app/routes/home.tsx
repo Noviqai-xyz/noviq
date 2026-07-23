@@ -1,162 +1,334 @@
+import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
-import { NoviqLogo } from "../components/noviq-logo";
+import {
+  fmtCompact,
+  fmtInt,
+  fmtUsd,
+  getNetworkOverview,
+  type NetworkOverview,
+} from "../lib/analytics";
+import { AreaChart, Bars, LineChart, StackedBars } from "../components/charts";
 
 const SITE_URL = "https://noviqai.xyz";
+const POLL_MS = 15_000;
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Noviq AI Data - Network Analytics" },
+    { title: "Noviq Data - Live Network Analytics" },
     {
       name: "description",
       content:
-        "Live network data for Noviq AI - requests, inference tokens, contributors, and settlement activity.",
+        "Live, aggregate-only data for the Noviq inference network: tokens generated, workers online, jobs, and contributor growth. No prompt or response content, ever.",
     },
     { property: "og:url", content: "https://data.noviqai.xyz" },
   ];
 }
 
 export default function Home() {
+  const [data, setData] = useState<NetworkOverview | null>(null);
+  const [error, setError] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    const controller = new AbortController();
+
+    const load = async () => {
+      try {
+        const next = await getNetworkOverview(controller.signal);
+        if (!alive) return;
+        setData(next);
+        setError(false);
+        setUpdatedAt(new Date());
+      } catch {
+        if (alive) setError(true);
+      }
+    };
+
+    load();
+    timer.current = setInterval(load, POLL_MS);
+    return () => {
+      alive = false;
+      controller.abort();
+      if (timer.current) clearInterval(timer.current);
+    };
+  }, []);
+
+  const t = data?.totals;
+  const live = data?.live;
+
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <div className="flex items-center gap-3">
-            <NoviqLogo />
-            <div>
-              <p className="text-sm font-semibold tracking-[0.2em]">NOVIQ DATA</p>
-              <p className="text-xs text-zinc-500">data.noviqai.xyz</p>
-            </div>
+    <div className="min-h-screen bg-black text-zinc-100">
+      {/* header */}
+      <header className="mx-auto max-w-5xl px-6 pt-10 pb-6">
+        <div className="flex items-baseline justify-between">
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold tracking-tight">noviq</span>
+            <span className="font-mono text-xs text-zinc-500">/ data</span>
           </div>
           <a
             href={SITE_URL}
-            className="text-sm text-zinc-400 transition hover:text-white"
+            className="font-mono text-xs text-zinc-500 transition hover:text-zinc-200"
           >
-            ← noviqai.xyz
-          </a>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-6 py-16">
-        <div className="mb-12 max-w-2xl space-y-4">
-          <p className="text-sm tracking-[0.2em] text-zinc-500">NETWORK DATA</p>
-          <h1 className="text-4xl font-semibold tracking-tight">
-            Everything happening on the network
-          </h1>
-          <p className="text-zinc-400">
-            Public metrics for contributed compute, inference volume, and
-            settlement - no prompt or response content, ever.
-          </p>
-        </div>
-
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {metrics.map((metric) => (
-            <article
-              key={metric.label}
-              className="rounded-2xl border border-white/10 bg-zinc-900/50 p-6"
-            >
-              <p className="text-sm text-zinc-500">{metric.label}</p>
-              <p className="mt-3 font-mono text-3xl font-medium tracking-tight">
-                {metric.value}
-              </p>
-              <p className="mt-2 text-xs text-zinc-500">{metric.hint}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="mt-10 grid gap-6 lg:grid-cols-2">
-          <article className="rounded-2xl border border-white/10 p-6">
-            <h2 className="text-lg font-medium">Inference by model</h2>
-            <p className="mt-2 text-sm text-zinc-500">
-              Output tokens generated across the network, by model tier.
-            </p>
-            <div className="mt-6 space-y-4">
-              {models.map((model) => (
-                <div key={model.name}>
-                  <div className="mb-2 flex items-center justify-between text-sm">
-                    <span>{model.name}</span>
-                    <span className="font-mono text-zinc-400">{model.share}</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
-                    <div
-                      className="h-full rounded-full bg-white"
-                      style={{ width: model.share }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="rounded-2xl border border-white/10 p-6">
-            <h2 className="text-lg font-medium">Contributor mix</h2>
-            <p className="mt-2 text-sm text-zinc-500">
-              Active workers by class over the last 24 hours.
-            </p>
-            <div className="mt-8 grid grid-cols-2 gap-4">
-              {contributors.map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-xl border border-white/10 bg-zinc-900/50 p-5"
-                >
-                  <p className="text-sm text-zinc-500">{item.label}</p>
-                  <p className="mt-2 font-mono text-2xl">{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-        </section>
-
-        <section className="mt-10 rounded-2xl border border-dashed border-white/15 p-8 text-center">
-          <p className="text-sm tracking-[0.2em] text-zinc-500">COMING ONLINE</p>
-          <p className="mx-auto mt-3 max-w-xl text-zinc-400">
-            Live data feeds will connect here as the orchestrator ships metering
-            records - token counts and settlement events only.
-          </p>
-        </section>
-      </main>
-
-      <footer className="border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} Noviq AI</p>
-          <a href={SITE_URL} className="hover:text-white">
             noviqai.xyz
           </a>
         </div>
-      </footer>
+
+        {/* hero */}
+        <div className="mt-10">
+          <div className="font-mono text-6xl font-semibold tracking-tighter tabular-nums sm:text-7xl">
+            {t ? fmtInt(t.tokensGenerated) : "\u2014"}
+          </div>
+          <p className="mt-2 font-mono text-xs text-zinc-500">
+            tokens generated by the network
+          </p>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-5xl px-6 pb-24">
+        {/* live */}
+        <Section title="live" updatedAt={updatedAt} error={error}>
+          <div className="grid grid-cols-2 gap-px bg-zinc-900 sm:grid-cols-3 lg:grid-cols-6">
+            <Stat live value={live ? String(live.workersOnline) : "\u2014"} label="workers online" />
+            <Stat live value={live ? String(live.nativeOnline) : "\u2014"} label="native (gpu)" />
+            <Stat live value={live ? String(live.browserOnline) : "\u2014"} label="browser" />
+            <Stat
+              value={live ? `${live.busyNow}/${live.workersOnline}` : "\u2014"}
+              label="busy now"
+            />
+            <Stat value={t ? fmtInt(t.jobsCompleted) : "\u2014"} label="jobs completed" />
+            <Stat value={t ? fmtUsd(t.settledUsd) : "\u2014"} label="settled (usd)" />
+          </div>
+        </Section>
+
+        {/* network */}
+        <Section title="network">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ChartCard
+              title="jobs per day"
+              legend={[
+                { label: "native", color: "#d4d4d8" },
+                { label: "browser", color: "#52525b" },
+              ]}
+            >
+              {data ? (
+                <StackedBars data={data.series.jobsPerDay} />
+              ) : (
+                <ChartSkeleton />
+              )}
+            </ChartCard>
+
+            <ChartCard title="tokens generated per day">
+              {data ? (
+                <AreaChart
+                  hatchId="hatch-tokens"
+                  data={data.series.tokensPerDay.map((d) => ({
+                    date: d.date,
+                    value: d.tokens,
+                  }))}
+                />
+              ) : (
+                <ChartSkeleton />
+              )}
+            </ChartCard>
+
+            <ChartCard title="avg network speed (tok/s)">
+              {data ? (
+                <LineChart
+                  step
+                  data={data.series.speedPerDay.map((d) => ({
+                    date: d.date,
+                    value: d.tokPerSec,
+                  }))}
+                />
+              ) : (
+                <ChartSkeleton />
+              )}
+            </ChartCard>
+
+            <ChartCard title="cumulative jobs">
+              {data ? (
+                <LineChart
+                  data={runningTotal(
+                    data.series.jobsPerDay.map((d) => ({
+                      date: d.date,
+                      value: d.native + d.browser,
+                    })),
+                  )}
+                />
+              ) : (
+                <ChartSkeleton />
+              )}
+            </ChartCard>
+          </div>
+        </Section>
+
+        {/* users */}
+        <Section title="users">
+          <div className="mb-4 grid grid-cols-2 gap-px bg-zinc-900 sm:grid-cols-4">
+            <Stat
+              value={t ? fmtInt(t.registeredUsers) : "\u2014"}
+              label="registered users"
+            />
+            <Stat
+              value={
+                data
+                  ? fmtInt(
+                      data.series.signupsPerDay.reduce((a, d) => a + d.count, 0),
+                    )
+                  : "\u2014"
+              }
+              label="signups (30d)"
+            />
+            <Stat
+              value={t ? fmtCompact(t.tokensGenerated) : "\u2014"}
+              label="tokens (all time)"
+            />
+            <Stat value={t ? fmtUsd(t.settledUsd) : "\u2014"} label="contributor payouts" />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ChartCard title="new signups per day">
+              {data ? (
+                <Bars
+                  data={data.series.signupsPerDay.map((d) => ({
+                    date: d.date,
+                    value: d.count,
+                  }))}
+                />
+              ) : (
+                <ChartSkeleton />
+              )}
+            </ChartCard>
+            <ChartCard title="cumulative users">
+              {data ? (
+                <AreaChart
+                  hatchId="hatch-users"
+                  data={data.series.cumulativeUsers.map((d) => ({
+                    date: d.date,
+                    value: d.total,
+                  }))}
+                />
+              ) : (
+                <ChartSkeleton />
+              )}
+            </ChartCard>
+          </div>
+        </Section>
+
+        <p className="mt-12 font-mono text-[11px] leading-relaxed text-zinc-600">
+          Aggregate metrics only - no prompt or response content is ever recorded
+          or shown. Updated live from the Noviq orchestrator.
+        </p>
+      </main>
     </div>
   );
 }
 
-const metrics = [
-  {
-    label: "Requests (24h)",
-    value: "-",
-    hint: "Completed inference jobs",
-  },
-  {
-    label: "Output tokens (24h)",
-    value: "-",
-    hint: "Billing unit across all models",
-  },
-  {
-    label: "Active contributors",
-    value: "-",
-    hint: "Browser + native workers online",
-  },
-  {
-    label: "USDG settled (24h)",
-    value: "-",
-    hint: "70% contributors · 30% treasury",
-  },
-];
+// ---- pieces ---------------------------------------------------------------
 
-const models = [
-  { name: "Qwen3 8B (browser)", share: "-" },
-  { name: "Noviq Max 27B (native)", share: "-" },
-  { name: "Other", share: "-" },
-];
+function Section({
+  title,
+  children,
+  updatedAt,
+  error,
+}: {
+  title: string;
+  children: React.ReactNode;
+  updatedAt?: Date | null;
+  error?: boolean;
+}) {
+  return (
+    <section className="mt-12 first:mt-8">
+      <div className="mb-4 flex items-center justify-between border-b border-zinc-800 pb-2">
+        <h2 className="text-xl tracking-tight text-zinc-300">{title}</h2>
+        {(updatedAt || error) && (
+          <span className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500">
+            <span
+              className={`inline-block h-1.5 w-1.5 rounded-full ${
+                error ? "bg-red-500" : "bg-emerald-500"
+              }`}
+            />
+            {error
+              ? "reconnecting"
+              : `updated ${updatedAt?.toLocaleTimeString("en-US", {
+                  hour12: false,
+                })}`}
+          </span>
+        )}
+      </div>
+      {children}
+    </section>
+  );
+}
 
-const contributors = [
-  { label: "Browser workers", value: "-" },
-  { label: "Native workers", value: "-" },
-];
+function Stat({
+  value,
+  label,
+  live,
+}: {
+  value: string;
+  label: string;
+  live?: boolean;
+}) {
+  return (
+    <div className="bg-black p-4">
+      <div className="font-mono text-2xl font-medium tabular-nums text-zinc-100">
+        {value}
+      </div>
+      <div className="mt-1 flex items-center gap-1.5 font-mono text-[11px] text-zinc-500">
+        {live && <span className="inline-block h-2 w-2 bg-emerald-500" />}
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function ChartCard({
+  title,
+  legend,
+  children,
+}: {
+  title: string;
+  legend?: { label: string; color: string }[];
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border border-zinc-800 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="font-mono text-xs text-zinc-400">{title}</span>
+        {legend && (
+          <span className="flex items-center gap-3">
+            {legend.map((l) => (
+              <span
+                key={l.label}
+                className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-500"
+              >
+                <span
+                  className="inline-block h-2 w-2"
+                  style={{ background: l.color }}
+                />
+                {l.label}
+              </span>
+            ))}
+          </span>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function ChartSkeleton() {
+  return <div className="h-[190px] w-full animate-pulse bg-zinc-900/60" />;
+}
+
+function runningTotal(
+  data: { date: string; value: number }[],
+): { date: string; value: number }[] {
+  let sum = 0;
+  return data.map((d) => {
+    sum += d.value;
+    return { date: d.date, value: sum };
+  });
+}

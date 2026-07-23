@@ -22,7 +22,7 @@ export const env = {
   privyAppSecret: required("PRIVY_APP_SECRET"),
   allowedOrigins: optional(
     "ALLOWED_ORIGINS",
-    "http://localhost:5173,http://localhost:3000,https://noviqai.xyz,https://www.noviqai.xyz",
+    "http://localhost:5173,http://localhost:3000,https://noviqai.xyz,https://www.noviqai.xyz,https://data.noviqai.xyz",
   )
     .split(",")
     .map((s) => s.trim())

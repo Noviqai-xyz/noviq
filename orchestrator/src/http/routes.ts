@@ -5,6 +5,7 @@ import { issueWorkerToken, revokeWorkerToken } from "../auth/tokens.js";
 import { dispatchJob } from "../jobs.js";
 import { registry } from "../registry.js";
 import { getNetworkStats, getUserStats } from "../stats.js";
+import { getNetworkOverview } from "../analytics.js";
 import {
   isValidEvmAddress,
   PayoutError,
@@ -60,6 +61,15 @@ export function registerRoutes(app: FastifyInstance): void {
   // Public network stats (also used by the data dashboard).
   app.get("/v1/network", async (_req, reply) => {
     return reply.send(getNetworkStats());
+  });
+
+  // Public, aggregate-only network analytics for the data dashboard
+  // (totals + live counts + 30-day time series). No auth; no content.
+  app.get("/v1/network/overview", async (_req, reply) => {
+    const overview = await getNetworkOverview();
+    // Cache at the edge briefly - this is heavy-ish and updates slowly.
+    reply.header("Cache-Control", "public, max-age=10");
+    return reply.send(overview);
   });
 
   // Set / update the user's payout (EVM) address.
