@@ -10,5 +10,14 @@
     "build:website": "pnpm --filter noviq-website build",
     "build:data": "pnpm --filter noviq-data build",
     "build:client": "pnpm --filter @noviq/worker build"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@reown/appkit",
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "utf-8-validate"
+    ]
   }
 }
