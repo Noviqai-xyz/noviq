@@ -258,7 +258,7 @@ body {
   animation: spin-slow 60s linear infinite;
 }
 
-/* ---- Living liquid glass: slow viscous drift (6–20s loops) ---- */
+/* ---- Living liquid glass: slow viscous drift (6-20s loops) ---- */
 @keyframes liquid-a {
   0%,
   100% {

@@ -44,7 +44,7 @@ export interface BrowserInferenceEngine {
 /**
  * Browser contributor worker (WebGPU / WebLLM).
  *
- * Intended to run inside noviqai.xyz — keeps a tab open, serves Qwen3 8B-class
+ * Intended to run inside noviqai.xyz - keeps a tab open, serves Qwen3 8B-class
  * models, and connects to the orchestrator over WebSocket.
  */
 export class BrowserWorker {

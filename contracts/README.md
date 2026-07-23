@@ -5,19 +5,19 @@ Foundry.
 
 > ⚠️ **Audit gate.** These contracts are a tested, devnet-ready foundation. They
 > **must** be independently audited before they custody real funds on mainnet.
-> Nothing here is "proven" until it passes that gate — same discipline as the
+> Nothing here is "proven" until it passes that gate - same discipline as the
 > inference side of NoviQ.
 
 ---
 
-## The economic model — token, revenue, GPUs, swarm
+## The economic model - token, revenue, GPUs, swarm
 
 **$NOVIQ** is an ERC-20 launched externally (Robinhood launchpad). It is three
 things at once:
 
-1. **Metering unit** — inference is billed in it (or a stable, settled to it).
-2. **Staking asset** — stake it to earn a share of network revenue.
-3. **Governance** — later, stakers govern privacy parameters.
+1. **Metering unit** - inference is billed in it (or a stable, settled to it).
+2. **Staking asset** - stake it to earn a share of network revenue.
+3. **Governance** - later, stakers govern privacy parameters.
 
 ### Money flow (real yield)
 
@@ -33,7 +33,7 @@ Every paid inference request is settled and split. Recommended split:
 ```
 
 - **GPU workers (~60%)** are paid **per job**, and a payout only releases against
-  a **valid correctness/privacy receipt** — the same receipt discipline the
+  a **valid correctness/privacy receipt** - the same receipt discipline the
   research uses to prove the swarm ran your job correctly and privately. The
   receipt is the proof-of-work gate for getting paid. (Off-chain settlement
   service verifies receipts, then triggers payouts.)
@@ -42,7 +42,7 @@ Every paid inference request is settled and split. Recommended split:
   `NoviqStaking`, which distributes pro-rata to everyone currently staked.
 
 The split percentages are **policy, enforced by the off-chain settlement service**
-(and, later, a `Settlement` contract — see Roadmap). `NoviqStaking` only needs to
+(and, later, a `Settlement` contract - see Roadmap). `NoviqStaking` only needs to
 receive its slice via `fundRewards`.
 
 ### How staking pays real yield
@@ -52,7 +52,7 @@ receive its slice via `fundRewards`.
 - `fundRewards(x)` raises `accRewardPerShare` by `x / totalStaked`.
 - Each staker's claimable balance = their share of everything funded **while they
   were staked**. Late joiners never dilute past rewards; leavers stop earning.
-- O(1) per user — no loops, no keeper needed to "drip".
+- O(1) per user - no loops, no keeper needed to "drip".
 
 ### Self-custody guarantees
 
@@ -122,9 +122,9 @@ Until `VITE_STAKING_ADDRESS` + `VITE_NOVIQ_TOKEN_ADDRESS` + RPC are set, the
 
 ## Roadmap (deferred, named not claimed)
 
-- **`Settlement` contract** — split inference payments on-chain
+- **`Settlement` contract** - split inference payments on-chain
   (workers / treasury / staking) so the revenue policy is trustless, not just an
   off-chain service.
-- **Worker registry + slashing** — stake $NOVIQ as worker collateral; slash on a
+- **Worker registry + slashing** - stake $NOVIQ as worker collateral; slash on a
   failed compute/privacy receipt. (Research item, kept separate from custody.)
-- **Governance** — stakers vote privacy parameters and the revenue split.
+- **Governance** - stakers vote privacy parameters and the revenue split.

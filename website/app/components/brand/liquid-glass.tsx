@@ -6,7 +6,7 @@
  * displacement filter that makes forms slowly "flow" like a viscous fluid.
  *
  * Palette is low-saturation; edge colour comes from *reflection* gradients, not
- * emitted light. All motion loops slowly (12–20s) and respects reduced-motion.
+ * emitted light. All motion loops slowly (12-20s) and respects reduced-motion.
  *
  * `LiquidGlassDefs` is mounted ONCE (see root layout) so every shape below can
  * reference the shared gradient/filter ids without duplicating them.
@@ -15,7 +15,7 @@
 import type { ReactNode } from "react";
 
 /* ------------------------------------------------------------------ */
-/* Shared defs — mounted once globally                                 */
+/* Shared defs - mounted once globally                                 */
 /* ------------------------------------------------------------------ */
 
 export function LiquidGlassDefs() {
@@ -28,7 +28,7 @@ export function LiquidGlassDefs() {
       style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
     >
       <defs>
-        {/* Chrome ramp — vertical. Sharp light/dark banding = reflective metal.
+        {/* Chrome ramp - vertical. Sharp light/dark banding = reflective metal.
             Low saturation; violet + champagne only kiss the extremes. */}
         <linearGradient id="lgChrome" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#EAF6FF" />
@@ -41,7 +41,7 @@ export function LiquidGlassDefs() {
           <stop offset="100%" stopColor="#D8C9FF" />
         </linearGradient>
 
-        {/* Crystal fill — brighter, for solid blob volumes. */}
+        {/* Crystal fill - brighter, for solid blob volumes. */}
         <linearGradient id="lgCrystal" x1="0.15" y1="0" x2="0.6" y2="1">
           <stop offset="0%" stopColor="#F4FBFF" />
           <stop offset="26%" stopColor="#CFE2EC" />
@@ -51,7 +51,7 @@ export function LiquidGlassDefs() {
           <stop offset="100%" stopColor="#E7DEFF" />
         </linearGradient>
 
-        {/* Reflection rim — the only place brand colour concentrates. */}
+        {/* Reflection rim - the only place brand colour concentrates. */}
         <linearGradient id="lgRim" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#D4F3FF" stopOpacity="0.9" />
           <stop offset="40%" stopColor="#7ED6FF" stopOpacity="0.55" />
@@ -76,14 +76,14 @@ export function LiquidGlassDefs() {
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </radialGradient>
 
-        {/* Ambient reflection glow (never emitted — soft environment bounce). */}
+        {/* Ambient reflection glow (never emitted - soft environment bounce). */}
         <radialGradient id="lgGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#7ED6FF" stopOpacity="0.18" />
           <stop offset="55%" stopColor="#5FA9FF" stopOpacity="0.05" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
 
-        {/* Living-liquid morph — slow flowing displacement. */}
+        {/* Living-liquid morph - slow flowing displacement. */}
         <filter id="lgMorph" x="-35%" y="-35%" width="170%" height="170%">
           <feTurbulence
             type="fractalNoise"
@@ -146,7 +146,7 @@ export function LiquidGlassDefs() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Liquid ribbon — a flowing chrome tube                               */
+/* Liquid ribbon - a flowing chrome tube                               */
 /* ------------------------------------------------------------------ */
 
 export function LiquidRibbon({
@@ -205,7 +205,7 @@ export function LiquidRibbon({
 }
 
 /* ------------------------------------------------------------------ */
-/* Liquid logo mark — one continuous glass tube (quatrefoil)           */
+/* Liquid logo mark - one continuous glass tube (quatrefoil)           */
 /* ------------------------------------------------------------------ */
 
 const QUATREFOIL =
@@ -256,7 +256,7 @@ export function LiquidLogoMark({ className = "" }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Liquid capsule — a solid glass volume (pipeline node)               */
+/* Liquid capsule - a solid glass volume (pipeline node)               */
 /* ------------------------------------------------------------------ */
 
 export function LiquidCapsule({
@@ -302,7 +302,7 @@ export function LiquidCapsule({
 }
 
 /* ------------------------------------------------------------------ */
-/* Ambient background — forms entering from the edges, negative space  */
+/* Ambient background - forms entering from the edges, negative space  */
 /* ------------------------------------------------------------------ */
 
 type AmbientVariant = "hero" | "left" | "right" | "footer";
@@ -352,7 +352,7 @@ export function AmbientLiquid({
 }
 
 /* ------------------------------------------------------------------ */
-/* Liquid panel — an organic glass frame wrapping content              */
+/* Liquid panel - an organic glass frame wrapping content              */
 /* ------------------------------------------------------------------ */
 
 export function LiquidPanel({

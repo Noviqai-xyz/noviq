@@ -21,7 +21,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  *   (USDC, or $NOVIQ) is deposited via {fundRewards}, which raises a global
  *   `accRewardPerShare` accumulator. Each staker's claimable balance is their
  *   pro-rata share of everything funded while they were staked (MasterChef
- *   accounting — O(1) per user, no unbounded loops).
+ *   accounting - O(1) per user, no unbounded loops).
  * - **Decimal-safe.** `ACC_PRECISION = 1e27` keeps accounting precise even when
  *   the reward token (e.g. USDC, 6 decimals) has fewer decimals than the stake
  *   token (e.g. $NOVIQ, 18 decimals).

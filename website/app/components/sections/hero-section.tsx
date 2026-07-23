@@ -2,9 +2,9 @@ import { HeroVisual } from "../brand/hero-visual";
 
 export function HeroSection() {
   return (
-    <section className="relative isolate flex min-h-[88vh] items-center overflow-hidden">
+    <section className="relative isolate flex min-h-[74vh] items-center overflow-hidden">
       <HeroVisual />
-      <div className="page-shell relative z-10 py-20 md:py-28">
+      <div className="page-shell relative z-10 py-14 md:py-20">
         <div className="max-w-3xl">
           <p
             className="load-rise label-caps"

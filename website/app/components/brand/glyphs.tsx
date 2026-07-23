@@ -1,7 +1,7 @@
 /**
  * Minimal line glyphs drawn in the liquid-glass reflection palette (they stroke
- * with the shared #lgRim gradient). Kept clean and small — no circuits, grids or
- * node-graphs — so they read as premium marks rather than tech clichés.
+ * with the shared #lgRim gradient). Kept clean and small - no circuits, grids or
+ * node-graphs - so they read as premium marks rather than tech clichés.
  */
 
 interface GlyphProps {
@@ -11,7 +11,7 @@ interface GlyphProps {
 const STROKE = "url(#lgRim)";
 const ICE = "#D4F3FF";
 
-/** Shield with a pulsing lock core — proof / privacy. */
+/** Shield with a pulsing lock core - proof / privacy. */
 export function ShieldGlyph({ className = "" }: GlyphProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
@@ -30,7 +30,7 @@ export function ShieldGlyph({ className = "" }: GlyphProps) {
   );
 }
 
-/** Two intertwined liquid rings — pooled swarms, decentralized. */
+/** Two intertwined liquid rings - pooled swarms, decentralized. */
 export function MeshGlyph({ className = "" }: GlyphProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
@@ -43,7 +43,7 @@ export function MeshGlyph({ className = "" }: GlyphProps) {
   );
 }
 
-/** Open padlock — uncensored, no policy gate. */
+/** Open padlock - uncensored, no policy gate. */
 export function UnlockGlyph({ className = "" }: GlyphProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
@@ -55,7 +55,7 @@ export function UnlockGlyph({ className = "" }: GlyphProps) {
   );
 }
 
-/** Terminal prompt — native worker. */
+/** Terminal prompt - native worker. */
 export function TerminalGlyph({ className = "" }: GlyphProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
@@ -68,7 +68,7 @@ export function TerminalGlyph({ className = "" }: GlyphProps) {
   );
 }
 
-/** Browser window with a soft spark — browser worker. */
+/** Browser window with a soft spark - browser worker. */
 export function BrowserGlyph({ className = "" }: GlyphProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
@@ -83,7 +83,7 @@ export function BrowserGlyph({ className = "" }: GlyphProps) {
   );
 }
 
-/** Plug into a socket — OpenAI-compatible API. */
+/** Plug into a socket - OpenAI-compatible API. */
 export function ApiGlyph({ className = "" }: GlyphProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">

@@ -60,7 +60,7 @@ function parseArgs(argv: string[]): Record<string, string | undefined> {
 }
 
 export function printHelp(): void {
-  console.log(`noviq-worker — Noviq AI native inference worker
+  console.log(`noviq-worker - Noviq AI native inference worker
 
 Usage:
   noviq-worker --token <token> [options]

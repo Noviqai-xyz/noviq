@@ -7,8 +7,9 @@ const products = [
     accent: true,
     title: "Native Worker",
     line: "Background GPU via Ollama or vLLM. The biggest models, the highest pay.",
-    rate: "$0.10–0.14 / job",
+    rate: "$0.10-0.14 / job",
     cta: "Get install command",
+    href: "/earn",
     command: "npx @noviq/worker --token YOUR_TOKEN",
     Glyph: TerminalGlyph,
   },
@@ -19,6 +20,7 @@ const products = [
     line: "In-tab inference via WebGPU. One click, no terminal.",
     rate: "$0.07 / job",
     cta: "Open browser worker",
+    href: "/earn",
     command: null,
     Glyph: BrowserGlyph,
   },
@@ -29,6 +31,7 @@ const products = [
     line: "Drop-in chat completions. No logging, pay per token.",
     rate: "Per token",
     cta: "View endpoint",
+    href: null,
     command: "curl https://api.noviqai.xyz/v1/chat/completions",
     Glyph: ApiGlyph,
   },
@@ -86,12 +89,21 @@ export function ProductsSection() {
                   </pre>
                 ) : null}
 
-                <button
-                  type="button"
-                  className="btn-secondary mt-6 w-full py-3 text-sm"
-                >
-                  {product.cta}
-                </button>
+                {product.href ? (
+                  <a
+                    href={product.href}
+                    className="btn-secondary mt-6 w-full py-3 text-center text-sm"
+                  >
+                    {product.cta}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn-secondary mt-6 w-full py-3 text-sm"
+                  >
+                    {product.cta}
+                  </button>
+                )}
               </article>
             </Reveal>
           ))}

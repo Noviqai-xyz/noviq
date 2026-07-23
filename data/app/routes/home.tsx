@@ -5,11 +5,11 @@ const SITE_URL = "https://noviqai.xyz";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Noviq AI Data — Network Analytics" },
+    { title: "Noviq AI Data - Network Analytics" },
     {
       name: "description",
       content:
-        "Live network data for Noviq AI — requests, inference tokens, contributors, and settlement activity.",
+        "Live network data for Noviq AI - requests, inference tokens, contributors, and settlement activity.",
     },
     { property: "og:url", content: "https://data.noviqai.xyz" },
   ];
@@ -44,7 +44,7 @@ export default function Home() {
           </h1>
           <p className="text-zinc-400">
             Public metrics for contributed compute, inference volume, and
-            settlement — no prompt or response content, ever.
+            settlement - no prompt or response content, ever.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function Home() {
           <p className="text-sm tracking-[0.2em] text-zinc-500">COMING ONLINE</p>
           <p className="mx-auto mt-3 max-w-xl text-zinc-400">
             Live data feeds will connect here as the orchestrator ships metering
-            records — token counts and settlement events only.
+            records - token counts and settlement events only.
           </p>
         </section>
       </main>
@@ -130,33 +130,33 @@ export default function Home() {
 const metrics = [
   {
     label: "Requests (24h)",
-    value: "—",
+    value: "-",
     hint: "Completed inference jobs",
   },
   {
     label: "Output tokens (24h)",
-    value: "—",
+    value: "-",
     hint: "Billing unit across all models",
   },
   {
     label: "Active contributors",
-    value: "—",
+    value: "-",
     hint: "Browser + native workers online",
   },
   {
     label: "USDG settled (24h)",
-    value: "—",
+    value: "-",
     hint: "70% contributors · 30% treasury",
   },
 ];
 
 const models = [
-  { name: "Qwen3 8B (browser)", share: "—" },
-  { name: "Noviq Max 27B (native)", share: "—" },
-  { name: "Other", share: "—" },
+  { name: "Qwen3 8B (browser)", share: "-" },
+  { name: "Noviq Max 27B (native)", share: "-" },
+  { name: "Other", share: "-" },
 ];
 
 const contributors = [
-  { label: "Browser workers", value: "—" },
-  { label: "Native workers", value: "—" },
+  { label: "Browser workers", value: "-" },
+  { label: "Native workers", value: "-" },
 ];

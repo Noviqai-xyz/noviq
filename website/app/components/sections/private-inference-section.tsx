@@ -19,7 +19,7 @@ const provenPillars = [
 export function PrivateInferenceSection() {
   return (
     <section id="private" className="relative border-t border-white/[0.06]">
-      <div className="page-shell relative pb-16 pt-20 md:pb-24 md:pt-24">
+      <div className="page-shell relative pb-16 pt-10 md:pb-24 md:pt-14">
         {/* 01 - The problem */}
         <Reveal>
           <div id="problem" className="max-w-3xl scroll-mt-24">

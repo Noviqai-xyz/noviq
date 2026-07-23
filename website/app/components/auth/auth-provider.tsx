@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
 /**
  * Wraps the app in Privy (email + X sign-in and external EVM wallets) and wires
  * wagmi + react-query on top so on-chain reads/writes (staking) use the same
- * connected wallet. No embedded wallets are auto-created — pure auth + BYO wallet.
+ * connected wallet. No embedded wallets are auto-created - pure auth + BYO wallet.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   if (!APP_ID) return <>{children}</>;

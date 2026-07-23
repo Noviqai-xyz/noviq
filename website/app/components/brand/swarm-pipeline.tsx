@@ -1,10 +1,10 @@
 import { LiquidCapsule } from "./liquid-glass";
 
 const NODES = [
-  { label: "Entry", layers: "layers 0–15", warm: true },
-  { label: "Node 2", layers: "layers 16–31", warm: false },
-  { label: "Node 3", layers: "layers 32–47", warm: false },
-  { label: "Exit", layers: "layers 48–63", warm: true },
+  { label: "Entry", layers: "layers 0-15", warm: true },
+  { label: "Node 2", layers: "layers 16-31", warm: false },
+  { label: "Node 3", layers: "layers 32-47", warm: false },
+  { label: "Exit", layers: "layers 48-63", warm: true },
 ];
 
 /**

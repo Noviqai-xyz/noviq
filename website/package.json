@@ -1,7 +1,7 @@
 {
   "name": "noviq-website",
   "private": true,
-  "description": "Noviq AI landing page and app — noviqai.xyz",
+  "description": "Noviq AI landing page and app - noviqai.xyz",
   "type": "module",
   "scripts": {
     "build": "react-router build",
@@ -10,6 +10,8 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.84",
+    "@noviq/worker": "workspace:*",
     "@privy-io/react-auth": "^3.35.1",
     "@privy-io/wagmi": "^1.0.5",
     "@react-router/node": "8.0.0",

@@ -6,7 +6,7 @@ Public network data dashboard for [data.noviqai.xyz](https://data.noviqai.xyz).
 - Contributor activity
 - Settlement and treasury metrics
 
-No prompt or response content is shown — only aggregate network data.
+No prompt or response content is shown - only aggregate network data.
 
 ## Development
 

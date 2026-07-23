@@ -1,7 +1,7 @@
 {
   "name": "noviq-data",
   "private": true,
-  "description": "Noviq AI network data dashboard — data.noviqai.xyz",
+  "description": "Noviq AI network data dashboard - data.noviqai.xyz",
   "type": "module",
   "scripts": {
     "build": "react-router build",

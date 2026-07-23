@@ -1,13 +1,13 @@
 # @noviq/worker
 
-Worker software every Noviq contributor runs — native CLI (Ollama) and browser worker (WebLLM). Published to npm; run the native worker with `npx @noviq/worker --token YOUR_TOKEN`.
+Worker software every Noviq contributor runs - native CLI (Ollama) and browser worker (WebLLM). Published to npm; run the native worker with `npx @noviq/worker --token YOUR_TOKEN`.
 
 ## Modes
 
 | Mode | Status | Description |
 |------|--------|-------------|
 | **Single-node** | v1 (now) | Full prompt → local forward pass → stream tokens to orchestrator |
-| **Swarm** | v2 (later) | Layer-block pipeline via `noviq-swarm` — see `SwarmWorker` stub |
+| **Swarm** | v2 (later) | Layer-block pipeline via `noviq-swarm` - see `SwarmWorker` stub |
 
 ## Native worker (Ollama)
 
@@ -37,7 +37,7 @@ npx @noviq/worker --token YOUR_TOKEN
 
 | Flag / env | Default | Description |
 |------------|---------|-------------|
-| `--token` / `NOVIQ_TOKEN` | — | Worker token from noviqai.xyz (required) |
+| `--token` / `NOVIQ_TOKEN` | - | Worker token from noviqai.xyz (required) |
 | `--orchestrator` / `NOVIQ_ORCHESTRATOR_URL` | `wss://orchestrator.noviqai.xyz/v1/worker` | Orchestrator WebSocket |
 | `--model` / `NOVIQ_MODEL` | `qwen2.5:27b` | Ollama model ref |
 | `--model-id` / `NOVIQ_MODEL_ID` | `noviq-max-27b` | Model id advertised to network |
@@ -63,7 +63,7 @@ const worker = await createBrowserWorker({
     engine: "webllm",
     ref: "Qwen2.5-7B-Instruct-q4f16_1-MLC", // WebLLM prebuilt model id
   },
-  onProgress: (p) => console.log(`loading ${(p.progress * 100) | 0}% — ${p.text}`),
+  onProgress: (p) => console.log(`loading ${(p.progress * 100) | 0}% - ${p.text}`),
   onStatus: (s) => console.log(s),
 });
 
@@ -80,16 +80,16 @@ WebSocket messages between worker and `noviq-orchestrator`:
 
 **Worker → orchestrator**
 
-- `register` — token, GPU specs, model, worker class
-- `heartbeat` — liveness
-- `job_token` — streamed output token
-- `job_complete` — token usage for billing
-- `job_error` — failed job
+- `register` - token, GPU specs, model, worker class
+- `heartbeat` - liveness
+- `job_token` - streamed output token
+- `job_complete` - token usage for billing
+- `job_error` - failed job
 
 **Orchestrator → worker**
 
-- `registered` — assigned worker id
-- `job` — prompt + messages
+- `registered` - assigned worker id
+- `job` - prompt + messages
 - `ping` / `pong`
 
 No prompt or response bodies are retained by the client after the job completes.
@@ -108,4 +108,4 @@ No prompt or response bodies are retained by the client after the job completes.
 curl -fsSL https://noviqai.xyz/install.sh | bash -s -- --token YOUR_TOKEN
 ```
 
-*(Install script not shipped yet — run via pnpm until the curl installer lands.)*
+*(Install script not shipped yet - run via pnpm until the curl installer lands.)*

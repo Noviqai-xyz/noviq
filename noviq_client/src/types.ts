@@ -27,7 +27,7 @@ export interface WorkerRegistration {
   clientVersion: string;
 }
 
-/** v2 — assigned layer block when executionMode is `swarm` (noviq-swarm) */
+/** v2 - assigned layer block when executionMode is `swarm` (noviq-swarm) */
 export interface SwarmNodeAssignment {
   nodeId: string;
   layerStart: number;
@@ -52,7 +52,7 @@ export interface InferenceJob {
   messages: ChatMessage[];
   stream: boolean;
   maxTokens?: number;
-  /** v2 — present for noviq-swarm pipeline jobs */
+  /** v2 - present for noviq-swarm pipeline jobs */
   swarmPlan?: SwarmNodeAssignment;
 }
 

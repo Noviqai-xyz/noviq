@@ -1,7 +1,7 @@
 {
   "name": "@noviq/worker",
   "version": "0.1.0",
-  "description": "Noviq AI worker client — native (Ollama) and browser (WebLLM) inference",
+  "description": "Noviq AI worker client - native (Ollama) and browser (WebLLM) inference",
   "license": "MIT",
   "homepage": "https://noviqai.xyz",
   "repository": {

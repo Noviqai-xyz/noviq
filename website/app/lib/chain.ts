@@ -3,7 +3,7 @@ import { http } from "wagmi";
 import { createConfig } from "@privy-io/wagmi";
 
 /**
- * Robinhood Chain (EVM L2) — configured entirely from env so the real network
+ * Robinhood Chain (EVM L2) - configured entirely from env so the real network
  * details and the launchpad token address can be dropped in without code changes.
  *
  * Fill these in `.env` once the token is live:
@@ -45,7 +45,7 @@ export const addresses = {
 export const isConfigured =
   addresses.staking !== ZERO && addresses.noviq !== ZERO && !!RPC_URL;
 
-/** wagmi config wired for Privy — Privy manages connectors/active wallet. */
+/** wagmi config wired for Privy - Privy manages connectors/active wallet. */
 export const wagmiConfig = createConfig({
   chains: [robinhoodChain],
   transports: { [robinhoodChain.id]: http(RPC_URL || undefined) },

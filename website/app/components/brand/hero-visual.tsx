@@ -15,7 +15,7 @@ export function HeroVisual() {
         <AmbientLiquid variant="hero" fit="slice" />
       </div>
 
-      {/* Legibility scrims — keep the copy column pure black */}
+      {/* Legibility scrims - keep the copy column pure black */}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent md:via-black/60" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
     </div>

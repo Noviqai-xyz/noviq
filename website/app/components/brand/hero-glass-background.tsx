@@ -13,14 +13,14 @@ export function HeroGlassBackground() {
       {/* Keeps headline readable on small screens */}
       <div className="absolute inset-0 bg-gradient-to-b from-black from-35% via-black/90 via-55% to-transparent to-85% md:from-25% md:via-45% md:to-70%" />
 
-      {/* Primary ribbon — bottom edge, contained width */}
+      {/* Primary ribbon - bottom edge, contained width */}
       <div className="absolute inset-x-0 bottom-0 h-[38%] md:h-[48%]">
         <div className="absolute inset-x-0 bottom-0 translate-y-[18%] opacity-[0.28] md:translate-y-[8%] md:opacity-[0.38]">
           <HeroRibbon className="hero-glass-drift w-full" />
         </div>
       </div>
 
-      {/* Desktop-only accent — enters from the right, stays off the copy column */}
+      {/* Desktop-only accent - enters from the right, stays off the copy column */}
       <div className="absolute -right-[6%] bottom-[6%] hidden w-[min(42vw,520px)] opacity-[0.22] md:block hero-glass-drift-slow">
         <HeroRibbon thin className="w-full" />
       </div>

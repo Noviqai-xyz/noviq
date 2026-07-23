@@ -1,15 +1,17 @@
 {
   "name": "noviq",
   "private": true,
-  "description": "Noviq AI — inference network powered by contributed compute",
+  "description": "Noviq AI - inference network powered by contributed compute",
   "packageManager": "pnpm@11.1.2",
   "scripts": {
     "dev:website": "pnpm --filter noviq-website dev",
     "dev:data": "pnpm --filter noviq-data dev",
     "dev:client": "pnpm --filter @noviq/worker dev",
+    "dev:orchestrator": "pnpm --filter @noviq/orchestrator dev",
     "build:website": "pnpm --filter noviq-website build",
     "build:data": "pnpm --filter noviq-data build",
-    "build:client": "pnpm --filter @noviq/worker build"
+    "build:client": "pnpm --filter @noviq/worker build",
+    "build:orchestrator": "pnpm --filter @noviq/orchestrator build"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

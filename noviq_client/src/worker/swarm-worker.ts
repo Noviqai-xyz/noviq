@@ -1,7 +1,7 @@
 import type { InferenceJob, SwarmNodeAssignment } from "../types.js";
 
 /**
- * v2 placeholder — activated once noviq-swarm ships.
+ * v2 placeholder - activated once noviq-swarm ships.
  *
  * In swarm mode the worker loads only an assigned layer block, receives
  * activation tensors from the previous node in the pipeline (or raw prompts on
