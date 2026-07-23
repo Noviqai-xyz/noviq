@@ -1,0 +1,32 @@
+{
+  "name": "noviq-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Noviq AI worker client — native (Ollama) and browser (WebLLM) inference",
+  "type": "module",
+  "bin": {
+    "noviq-worker": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./browser": "./dist/browser/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

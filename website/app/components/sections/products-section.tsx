@@ -1,0 +1,97 @@
+import { ApiGlyph, BrowserGlyph, TerminalGlyph } from "../brand/glyphs";
+import { Reveal } from "../util/reveal";
+
+const products = [
+  {
+    tag: "Recommended",
+    accent: true,
+    title: "Native Worker",
+    line: "Background GPU via Ollama or vLLM. The biggest models, the highest pay.",
+    rate: "$0.10–0.14 / job",
+    cta: "Get install command",
+    command: "npx @noviqai/worker --token YOUR_TOKEN",
+    Glyph: TerminalGlyph,
+  },
+  {
+    tag: "Zero install",
+    accent: false,
+    title: "Browser Worker",
+    line: "In-tab inference via WebGPU. One click, no terminal.",
+    rate: "$0.07 / job",
+    cta: "Open browser worker",
+    command: null,
+    Glyph: BrowserGlyph,
+  },
+  {
+    tag: "User side",
+    accent: false,
+    title: "OpenAI-compatible API",
+    line: "Drop-in chat completions. No logging, pay per token.",
+    rate: "Per token",
+    cta: "View endpoint",
+    command: "curl https://api.noviqai.xyz/v1/chat/completions",
+    Glyph: ApiGlyph,
+  },
+];
+
+export function ProductsSection() {
+  return (
+    <section id="products" className="relative border-t border-white/[0.06]">
+      <div className="page-shell relative section-gap">
+        <Reveal>
+          <div className="max-w-2xl">
+            <p className="section-index">03 / Product</p>
+            <h2 className="mt-4 text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-tight tracking-[-0.02em]">
+              Three ways into the network
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          {products.map((product, i) => (
+            <Reveal key={product.title} delay={i * 100} className="h-full">
+              <article className="card glass-panel flex h-full flex-col rounded-3xl p-8">
+                <div className="flex items-start justify-between">
+                  <product.Glyph className="h-12 w-12" />
+                  <span
+                    className={
+                      product.accent
+                        ? "glass-tag"
+                        : "glass-tag glass-tag-neutral"
+                    }
+                  >
+                    {product.tag}
+                  </span>
+                </div>
+
+                <h3 className="mt-8 text-xl font-semibold tracking-[-0.02em]">
+                  {product.title}
+                </h3>
+                <p className="mt-3 flex-1 text-[15px] leading-relaxed text-[#8a8a8a]">
+                  {product.line}
+                </p>
+
+                <p className="mt-6 text-sm font-medium text-[#D4F3FF]">
+                  {product.rate}
+                </p>
+
+                {product.command ? (
+                  <pre className="mt-4 overflow-x-auto rounded-2xl border border-white/[0.06] bg-black/40 p-4 text-xs leading-relaxed text-[#a3a3a3]">
+                    <code>{product.command}</code>
+                  </pre>
+                ) : null}
+
+                <button
+                  type="button"
+                  className="btn-secondary mt-6 w-full py-3 text-sm"
+                >
+                  {product.cta}
+                </button>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
