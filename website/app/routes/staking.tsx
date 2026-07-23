@@ -10,11 +10,11 @@ import { CHAIN_ID, robinhoodChain } from "../lib/chain";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stake $NOVIQ — NoviQ AI" },
+    { title: "Stake $NOVIQ - NoviQ AI" },
     {
       name: "description",
       content:
-        "Stake $NOVIQ from self-custody and earn a share of real network revenue. Only you can unstake or claim — no server holds your funds.",
+        "Stake $NOVIQ from self-custody and earn a share of real network revenue. Only you can unstake or claim - no server holds your funds.",
     },
   ];
 }
@@ -49,7 +49,7 @@ export default function StakingPage() {
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-[#8a8a8a] md:text-lg">
             Your $NOVIQ stays in your own on-chain vault. Only you can unstake or
-            claim — no server holds your funds. Stakers earn a share of real
+            claim - no server holds your funds. Stakers earn a share of real
             network revenue from inference.
           </p>
         </Reveal>
@@ -70,17 +70,17 @@ function StatsRow() {
   const stats = [
     {
       label: "Total staked",
-      value: mounted && isConfigured ? `${pretty(data.fmt.totalStaked, 2)}` : "—",
+      value: mounted && isConfigured ? `${pretty(data.fmt.totalStaked, 2)}` : "-",
       unit: data.stakeSymbol,
     },
     {
       label: "Your stake",
-      value: mounted && isConfigured ? pretty(data.fmt.staked, 2) : "—",
+      value: mounted && isConfigured ? pretty(data.fmt.staked, 2) : "-",
       unit: data.stakeSymbol,
     },
     {
       label: "Claimable",
-      value: mounted && isConfigured ? pretty(data.fmt.pending, 4) : "—",
+      value: mounted && isConfigured ? pretty(data.fmt.pending, 4) : "-",
       unit: data.rewardSymbol,
     },
     { label: "Reward source", value: "Real yield", unit: "network revenue" },
@@ -157,7 +157,7 @@ function StakeCard() {
         await actions.unstake(amount);
       }
     } catch {
-      /* user rejected or tx error — surfaced by wallet */
+      /* user rejected or tx error - surfaced by wallet */
     }
   }
 
@@ -340,7 +340,7 @@ function RevenueNote() {
     },
     {
       title: "Paid for real work",
-      body: "Worker payouts release only against a valid correctness/privacy receipt — the same receipt discipline that proves the network ran your job right.",
+      body: "Worker payouts release only against a valid correctness/privacy receipt - the same receipt discipline that proves the network ran your job right.",
     },
     {
       title: "Self-custody, always",

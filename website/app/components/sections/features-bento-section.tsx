@@ -17,7 +17,7 @@ const features = [
   {
     title: "Private by design",
     description:
-      "Prompts and outputs are never stored. Workers process jobs ephemerally — only token counts are kept to bill the request.",
+      "Prompts and outputs are never stored. Workers process jobs ephemerally - only token counts are kept to bill the request.",
     illustration: PrivateIllustration,
     span: "lg:col-span-5",
     tall: false,
@@ -33,7 +33,7 @@ const features = [
   {
     title: "Earn on your GPU",
     description:
-      "Native workers earn the most — background inference via Ollama or vLLM, paid in USDG for every job your hardware completes.",
+      "Native workers earn the most - background inference via Ollama or vLLM, paid in USDG for every job your hardware completes.",
     illustration: EarnIllustration,
     span: "lg:col-span-7",
     tall: true,

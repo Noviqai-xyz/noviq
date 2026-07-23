@@ -20,7 +20,7 @@ export function PrivateInferenceSection() {
   return (
     <section id="private" className="relative border-t border-white/[0.06]">
       <div className="page-shell relative pb-16 pt-20 md:pb-24 md:pt-24">
-        {/* 01 — The problem */}
+        {/* 01 - The problem */}
         <Reveal>
           <div id="problem" className="max-w-3xl scroll-mt-24">
             <p className="section-index">01 / The problem</p>
@@ -30,12 +30,12 @@ export function PrivateInferenceSection() {
             </h2>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-[#8a8a8a]">
               Split a model across strangers&apos; GPUs and every node still
-              touches raw activations — enough to reconstruct pieces of a prompt.
+              touches raw activations - enough to reconstruct pieces of a prompt.
             </p>
           </div>
         </Reveal>
 
-        {/* 02 — How it leaks: the big liquid-glass explainer */}
+        {/* 02 - How it leaks: the big liquid-glass explainer */}
         <Reveal delay={80} variant="scale">
           <LiquidPanel className="mt-16 md:mt-20">
             <div className="p-8 md:p-14">
@@ -52,13 +52,13 @@ export function PrivateInferenceSection() {
 
               <p className="mt-10 max-w-2xl text-[15px] leading-relaxed text-[#a3a3a3] md:text-base">
                 Every node handles real activation tensors. Noviq exists to
-                quantify that exposure — and close it.
+                quantify that exposure - and close it.
               </p>
             </div>
           </LiquidPanel>
         </Reveal>
 
-        {/* The unsolved one — Private */}
+        {/* The unsolved one - Private */}
         <Reveal delay={60} variant="left">
           <article className="card glass-panel mt-6 rounded-[1.75rem] border-[rgba(126,214,255,0.18)] p-8 md:p-10">
             <p className="section-index text-[#7ED6FF]/70">The unsolved one</p>
@@ -99,7 +99,7 @@ export function PrivateInferenceSection() {
         <Reveal variant="fade">
           <p className="mt-14 max-w-2xl text-lg leading-relaxed text-[#a3a3a3] md:mt-16 md:text-xl">
             Privacy isn&apos;t a feature to bolt on later. It&apos;s the open
-            problem — and the one{" "}
+            problem - and the one{" "}
             <span className="text-white">Noviq exists to close.</span>
           </p>
         </Reveal>

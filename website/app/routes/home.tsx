@@ -7,18 +7,18 @@ import { NoviqTokenSection } from "../components/sections/noviq-token-section";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "NoviQ AI — Private Inference, Actually Proven" },
+    { title: "NoviQ AI - Private Inference, Actually Proven" },
     {
       name: "description",
       content:
-        "Sharded inference solved size, not privacy. Noviq quantifies prompt recoverability and closes the gap — decentralized, uncensored, on contributed GPUs.",
+        "Sharded inference solved size, not privacy. Noviq quantifies prompt recoverability and closes the gap - decentralized, uncensored, on contributed GPUs.",
     },
     { property: "og:url", content: "https://noviqai.xyz" },
     { property: "og:title", content: "NoviQ AI" },
     {
       property: "og:description",
       content:
-        "Private inference, actually proven — on GPUs people contribute, not rent.",
+        "Private inference, actually proven - on GPUs people contribute, not rent.",
     },
   ];
 }

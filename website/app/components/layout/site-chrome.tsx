@@ -95,7 +95,7 @@ export function SiteFooter() {
             <span className="text-sm font-semibold tracking-[0.22em]">NOVIQ AI</span>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-[#8a8a8a]">
-            Uncensored, private, decentralized inference — powered by GPUs people
+            Uncensored, private, decentralized inference - powered by GPUs people
             contribute, not rent.
           </p>
         </div>
