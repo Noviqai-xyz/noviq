@@ -8,11 +8,20 @@
  */
 const env = import.meta.env;
 
-export const ORCHESTRATOR_URL = (env.VITE_ORCHESTRATOR_URL as string) ??
-  "http://localhost:8787";
+// Deployed orchestrator (Railway). Overridable via VITE_ORCHESTRATOR_URL /
+// VITE_ORCHESTRATOR_WS_URL; used automatically in production builds so the
+// site works even if those env vars are not set on the host.
+const PROD_ORCHESTRATOR_URL = "https://noviqorchestrator-production.up.railway.app";
+const PROD_ORCHESTRATOR_WS_URL =
+  "wss://noviqorchestrator-production.up.railway.app/v1/worker";
 
-export const ORCHESTRATOR_WS_URL = (env.VITE_ORCHESTRATOR_WS_URL as string) ??
-  "ws://localhost:8787/v1/worker";
+export const ORCHESTRATOR_URL =
+  (env.VITE_ORCHESTRATOR_URL as string | undefined) ||
+  (env.PROD ? PROD_ORCHESTRATOR_URL : "http://localhost:8787");
+
+export const ORCHESTRATOR_WS_URL =
+  (env.VITE_ORCHESTRATOR_WS_URL as string | undefined) ||
+  (env.PROD ? PROD_ORCHESTRATOR_WS_URL : "ws://localhost:8787/v1/worker");
 
 export type WorkerClass = "native" | "browser";
 

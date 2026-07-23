@@ -20,7 +20,10 @@ export const env = {
   databaseUrl: required("DATABASE_URL"),
   privyAppId: required("PRIVY_APP_ID"),
   privyAppSecret: required("PRIVY_APP_SECRET"),
-  allowedOrigins: optional("ALLOWED_ORIGINS", "http://localhost:5173")
+  allowedOrigins: optional(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:3000,https://noviqai.xyz,https://www.noviqai.xyz",
+  )
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
