@@ -6,9 +6,9 @@
   "scripts": {
     "dev:website": "pnpm --filter noviq-website dev",
     "dev:data": "pnpm --filter noviq-data dev",
-    "dev:client": "pnpm --filter noviq-client dev",
+    "dev:client": "pnpm --filter @noviqai/worker dev",
     "build:website": "pnpm --filter noviq-website build",
     "build:data": "pnpm --filter noviq-data build",
-    "build:client": "pnpm --filter noviq-client build"
+    "build:client": "pnpm --filter @noviqai/worker build"
   }
 }

@@ -1,3 +1,5 @@
+import { LoginButton } from "../auth/login-button";
+
 const DATA_URL = "https://data.noviqai.xyz";
 
 function ChevronDownIcon({ className }: { className?: string }) {
@@ -72,9 +74,7 @@ export function SiteHeader() {
             </div>
           </div>
         </nav>
-        <a href="#products" className="btn-secondary hidden px-5 py-2.5 text-xs md:inline-flex">
-          Start contributing
-        </a>
+        <LoginButton className="btn-secondary hidden px-5 py-2.5 text-xs md:inline-flex" />
       </div>
     </header>
   );

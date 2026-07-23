@@ -20,7 +20,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           accentColor: "#7ED6FF",
           logo: "/black_background-removebg-preview.png",
         },
-        embeddedWallets: { createOnLogin: "off" },
+        embeddedWallets: {
+          ethereum: { createOnLogin: "off" },
+          solana: { createOnLogin: "off" },
+        },
       }}
     >
       {children}

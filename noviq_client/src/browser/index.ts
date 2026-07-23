@@ -14,12 +14,19 @@ import {
   serializeOrchestratorMessage,
   toRegistrationPayload,
 } from "../orchestrator/messages.js";
+import {
+  WebLLMEngine,
+  createWebLLMEngine,
+  type WebLLMEngineOptions,
+  type WebLLMProgress,
+} from "./webllm-engine.js";
 
 export interface BrowserWorkerOptions {
   orchestratorUrl: string;
-  wallet: string;
+  /** Contributor auth token from the signed-in noviqai.xyz session. */
+  token: string;
   model: ModelInfo;
-  /** WebLLM engine instance — inject once @mlc-ai/web-llm is wired in */
+  /** WebLLM engine instance. Use `createWebLLMEngine` or `createBrowserWorker`. */
   engine?: BrowserInferenceEngine;
   heartbeatIntervalMs?: number;
   onStatus?: (message: string) => void;
@@ -80,7 +87,7 @@ export class BrowserWorker {
       const registration: WorkerRegistration = {
         workerClass: "browser",
         executionMode: "single",
-        wallet: this.options.wallet,
+        token: this.options.token,
         gpu: {
           name: "WebGPU",
           vramMb: null,
@@ -191,5 +198,33 @@ export class BrowserWorker {
     }
   }
 }
+
+/**
+ * One-call setup for the website: builds a WebLLM engine (with load progress)
+ * and returns a ready-to-start BrowserWorker.
+ *
+ * ```ts
+ * const worker = await createBrowserWorker({
+ *   orchestratorUrl: "wss://orchestrator.noviqai.xyz/v1/worker",
+ *   token: session.workerToken,
+ *   model: { id: "noviq-browser-8b", engine: "webllm", ref: "Qwen2.5-7B-Instruct-q4f16_1-MLC" },
+ *   onProgress: (p) => setLoad(p.progress),
+ *   onStatus: (s) => setStatus(s),
+ * });
+ * await worker.start();
+ * ```
+ */
+export async function createBrowserWorker(
+  options: Omit<BrowserWorkerOptions, "engine"> & {
+    onProgress?: (report: WebLLMProgress) => void;
+  },
+): Promise<BrowserWorker> {
+  const { onProgress, ...workerOptions } = options;
+  const engine = new WebLLMEngine({ onProgress });
+  return new BrowserWorker({ ...workerOptions, engine });
+}
+
+export { WebLLMEngine, createWebLLMEngine };
+export type { WebLLMEngineOptions, WebLLMProgress };
 
 export type { WorkerRegistration };

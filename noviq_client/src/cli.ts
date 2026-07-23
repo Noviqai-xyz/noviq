@@ -13,7 +13,11 @@ async function main(): Promise<void> {
   }
 
   const config = loadConfig(argv);
-  const engine = createEngine(config.model, { ollamaHost: config.ollamaHost });
+  const engine = createEngine(config.model, {
+    ollamaHost: config.ollamaHost,
+    autoPull: config.autoPull,
+    onStatus: (message) => console.log(`[noviq-worker] ${message}`),
+  });
   const worker = new SingleNodeWorker(config, engine);
 
   const shutdown = () => {
@@ -27,10 +31,15 @@ async function main(): Promise<void> {
 
   console.log("[noviq-worker] Starting native worker...");
   console.log(`[noviq-worker] Model: ${config.model.ref} (${config.model.id})`);
-  console.log(`[noviq-worker] Wallet: ${config.wallet}`);
+  console.log(`[noviq-worker] Token: ${maskToken(config.token)}`);
   console.log(`[noviq-worker] Orchestrator: ${config.orchestratorUrl}`);
 
   await worker.start();
+}
+
+function maskToken(token: string): string {
+  if (token.length <= 8) return "****";
+  return `${token.slice(0, 6)}…${token.slice(-4)}`;
 }
 
 main().catch((error) => {

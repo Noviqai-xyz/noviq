@@ -1,6 +1,6 @@
-# noviq-client
+# @noviqai/worker
 
-Worker software every Noviq contributor runs — native CLI (Ollama) and browser worker (WebLLM).
+Worker software every Noviq contributor runs — native CLI (Ollama) and browser worker (WebLLM). Published to npm; run the native worker with `npx @noviqai/worker --token YOUR_TOKEN`.
 
 ## Modes
 
@@ -17,38 +17,62 @@ Requires [Ollama](https://ollama.com) running locally with your model pulled:
 ollama pull qwen2.5:27b
 ```
 
-Install and run from the monorepo root:
+Get your worker token by signing in at [noviqai.xyz](https://noviqai.xyz) (email or X), then:
 
 ```bash
 pnpm install
-pnpm --filter noviq-client build
+pnpm --filter @noviqai/worker build
 
 # Development (tsx)
-pnpm --filter noviq-client dev -- --wallet 0xYOUR_WALLET --model qwen2.5:27b
+pnpm --filter @noviqai/worker dev -- --token YOUR_TOKEN --model qwen2.5:27b --pull
 
 # Production binary
-pnpm --filter noviq-client start -- --wallet 0xYOUR_WALLET
+pnpm --filter @noviqai/worker start -- --token YOUR_TOKEN
+
+# Published (target)
+npx @noviqai/worker --token YOUR_TOKEN
 ```
 
 ### CLI options
 
 | Flag / env | Default | Description |
 |------------|---------|-------------|
-| `--wallet` / `NOVIQ_WALLET` | — | Payout wallet (required) |
+| `--token` / `NOVIQ_TOKEN` | — | Worker token from noviqai.xyz (required) |
 | `--orchestrator` / `NOVIQ_ORCHESTRATOR_URL` | `wss://orchestrator.noviqai.xyz/v1/worker` | Orchestrator WebSocket |
 | `--model` / `NOVIQ_MODEL` | `qwen2.5:27b` | Ollama model ref |
 | `--model-id` / `NOVIQ_MODEL_ID` | `noviq-max-27b` | Model id advertised to network |
 | `--ollama-host` / `OLLAMA_HOST` | `http://127.0.0.1:11434` | Ollama API base URL |
+| `--pull` / `NOVIQ_AUTO_PULL=1` | off | Pull the model via Ollama if it isn't installed |
+
+The token is sent both as an `Authorization: Bearer` header on the WebSocket
+handshake and inside the `register` payload.
 
 ## Browser worker (WebLLM)
 
+Runs a smaller model in-tab over WebGPU via [@mlc-ai/web-llm](https://github.com/mlc-ai/web-llm).
 Import from the browser subpath inside `noviqai.xyz`:
 
 ```typescript
-import { BrowserWorker } from "noviq-client/browser";
+import { createBrowserWorker } from "@noviqai/worker/browser";
+
+const worker = await createBrowserWorker({
+  orchestratorUrl: "wss://orchestrator.noviqai.xyz/v1/worker",
+  token: session.workerToken,            // from the signed-in Privy session
+  model: {
+    id: "noviq-browser-8b",
+    engine: "webllm",
+    ref: "Qwen2.5-7B-Instruct-q4f16_1-MLC", // WebLLM prebuilt model id
+  },
+  onProgress: (p) => console.log(`loading ${(p.progress * 100) | 0}% — ${p.text}`),
+  onStatus: (s) => console.log(s),
+});
+
+await worker.start(); // downloads/compiles the model, then serves jobs
 ```
 
-Wire in a WebLLM engine from [@mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) via `BrowserWorkerOptions.engine`.
+The first run downloads and compiles the model into the browser cache; later
+runs are instant. Use `WebLLMEngine` / `createWebLLMEngine` directly if you want
+to manage the engine yourself and pass it via `BrowserWorkerOptions.engine`.
 
 ## Orchestrator protocol
 
@@ -56,7 +80,7 @@ WebSocket messages between worker and `noviq-orchestrator`:
 
 **Worker → orchestrator**
 
-- `register` — wallet, GPU specs, model, worker class
+- `register` — token, GPU specs, model, worker class
 - `heartbeat` — liveness
 - `job_token` — streamed output token
 - `job_complete` — token usage for billing
@@ -81,7 +105,7 @@ No prompt or response bodies are retained by the client after the job completes.
 ## Install command (website copy-paste)
 
 ```bash
-curl -fsSL https://noviqai.xyz/install.sh | bash -s -- --wallet 0xYOUR_WALLET
+curl -fsSL https://noviqai.xyz/install.sh | bash -s -- --token YOUR_TOKEN
 ```
 
 *(Install script not shipped yet — run via pnpm until the curl installer lands.)*

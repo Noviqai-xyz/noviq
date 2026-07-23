@@ -20,7 +20,8 @@ export interface ModelInfo {
 export interface WorkerRegistration {
   workerClass: WorkerClass;
   executionMode: ExecutionMode;
-  wallet: string;
+  /** Contributor auth token issued after signing in at noviqai.xyz. */
+  token: string;
   gpu: GpuInfo;
   model: ModelInfo;
   clientVersion: string;
@@ -57,12 +58,14 @@ export interface InferenceJob {
 
 export interface WorkerConfig {
   orchestratorUrl: string;
-  wallet: string;
+  token: string;
   workerClass: WorkerClass;
   executionMode: ExecutionMode;
   model: ModelInfo;
   ollamaHost: string;
   heartbeatIntervalMs: number;
+  /** Pull the model via Ollama if it isn't already available. */
+  autoPull: boolean;
 }
 
 export interface StreamTokenEvent {

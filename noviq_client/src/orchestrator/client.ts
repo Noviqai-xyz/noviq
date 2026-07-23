@@ -14,6 +14,8 @@ import {
 export interface OrchestratorClientOptions {
   url: string;
   registration: WorkerRegistration;
+  /** Sent on the WebSocket handshake (e.g. Authorization: Bearer <token>). */
+  headers?: Record<string, string>;
   heartbeatIntervalMs?: number;
   onJob: (job: OrchestratorInbound & { type: "job" }) => Promise<void>;
   onConnected?: (workerId: string) => void;
@@ -71,7 +73,9 @@ export class OrchestratorClient {
 
   private connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const socket = new WebSocket(this.options.url);
+      const socket = new WebSocket(this.options.url, {
+        headers: this.options.headers,
+      });
       this.socket = socket;
 
       socket.once("open", () => {

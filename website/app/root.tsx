@@ -10,6 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { LiquidGlassDefs } from "./components/brand/liquid-glass";
+import { AuthProvider } from "./components/auth/auth-provider";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
@@ -40,7 +41,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <AuthProvider>
+      <Outlet />
+    </AuthProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

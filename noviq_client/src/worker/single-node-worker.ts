@@ -26,7 +26,7 @@ export class SingleNodeWorker {
     const registration: WorkerRegistration = {
       workerClass: this.config.workerClass,
       executionMode: this.config.executionMode,
-      wallet: this.config.wallet,
+      token: this.config.token,
       gpu,
       model: this.config.model,
       clientVersion: CLIENT_VERSION,
@@ -35,6 +35,7 @@ export class SingleNodeWorker {
     this.orchestrator = new OrchestratorClient({
       url: this.config.orchestratorUrl,
       registration,
+      headers: { Authorization: `Bearer ${this.config.token}` },
       heartbeatIntervalMs: this.config.heartbeatIntervalMs,
       log: (message) => console.log(`[noviq-worker] ${message}`),
       onConnected: (workerId) => {

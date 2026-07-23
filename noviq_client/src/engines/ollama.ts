@@ -19,26 +19,69 @@ export interface OllamaTagsResponse {
   models: Array<{ name: string; model: string }>;
 }
 
+export interface OllamaEngineOptions {
+  autoPull?: boolean;
+  onStatus?: (message: string) => void;
+}
+
 export class OllamaEngine implements InferenceEngineAdapter {
   readonly engine = "ollama" as const;
 
-  constructor(private readonly host: string) {}
+  constructor(
+    private readonly host: string,
+    private readonly options: OllamaEngineOptions = {},
+  ) {}
 
   async ensureReady(model: ModelInfo): Promise<void> {
     await this.assertReachable();
 
-    const models = await this.listModels();
-    const available = models.some(
-      (entry) =>
-        entry.name === model.ref ||
-        entry.model === model.ref ||
-        entry.name.startsWith(`${model.ref}:`),
-    );
+    if (await this.hasModel(model.ref)) return;
 
-    if (!available) {
+    if (this.options.autoPull) {
+      await this.pullModel(model.ref);
+      if (await this.hasModel(model.ref)) return;
+    }
+
+    throw new Error(
+      `Model "${model.ref}" is not loaded in Ollama. Run: ollama pull ${model.ref} (or pass --pull).`,
+    );
+  }
+
+  private async hasModel(ref: string): Promise<boolean> {
+    const models = await this.listModels();
+    return models.some(
+      (entry) =>
+        entry.name === ref ||
+        entry.model === ref ||
+        entry.name.startsWith(`${ref}:`),
+    );
+  }
+
+  /** Pulls a model via Ollama, logging coarse progress as it streams. */
+  private async pullModel(ref: string): Promise<void> {
+    this.options.onStatus?.(`Pulling model "${ref}" via Ollama…`);
+    const response = await fetch(`${this.host}/api/pull`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: ref, stream: true }),
+    });
+
+    if (!response.ok || !response.body) {
       throw new Error(
-        `Model "${model.ref}" is not loaded in Ollama. Run: ollama pull ${model.ref}`,
+        `Failed to pull "${ref}" (${response.status}). Pull it manually: ollama pull ${ref}`,
       );
+    }
+
+    let lastStatus = "";
+    for await (const chunk of readNdjson(response.body)) {
+      const status = typeof chunk.status === "string" ? chunk.status : "";
+      if (status && status !== lastStatus) {
+        lastStatus = status;
+        this.options.onStatus?.(`  ${status}`);
+      }
+      if (chunk.error) {
+        throw new Error(`Ollama pull error: ${String(chunk.error)}`);
+      }
     }
   }
 

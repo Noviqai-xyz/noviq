@@ -1,30 +1,72 @@
 {
-  "name": "noviq-client",
+  "name": "@noviqai/worker",
   "version": "0.1.0",
-  "private": true,
   "description": "Noviq AI worker client — native (Ollama) and browser (WebLLM) inference",
+  "license": "MIT",
+  "homepage": "https://noviqai.xyz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noviqai/noviq.git",
+    "directory": "noviq_client"
+  },
+  "keywords": [
+    "noviq",
+    "ai",
+    "inference",
+    "ollama",
+    "webllm",
+    "decentralized",
+    "gpu",
+    "worker"
+  ],
   "type": "module",
+  "sideEffects": false,
   "bin": {
     "noviq-worker": "./dist/cli.js"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./browser": "./dist/browser/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser/index.d.ts",
+      "import": "./dist/browser/index.js"
+    }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli.ts",
     "typecheck": "tsc --noEmit",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "prepack": "tsc"
   },
   "dependencies": {
     "ws": "^8.19.0"
   },
+  "peerDependencies": {
+    "@mlc-ai/web-llm": "^0.2.84"
+  },
+  "peerDependenciesMeta": {
+    "@mlc-ai/web-llm": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@mlc-ai/web-llm": "^0.2.84",
     "@types/node": "^22",
     "@types/ws": "^8.18.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "engines": {
     "node": ">=20"
