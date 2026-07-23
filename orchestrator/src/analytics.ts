@@ -176,7 +176,7 @@ export async function getNetworkOverview(): Promise<NetworkOverview> {
       workersOnline: counts.total,
       nativeOnline: counts.native,
       browserOnline: counts.browser,
-      busyNow: registry.queuedCount(),
+      busyNow: counts.busy,
       queued: registry.queuedCount(),
     },
     series: {

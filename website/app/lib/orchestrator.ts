@@ -53,6 +53,44 @@ export interface UserStats {
     canRequest: boolean;
     history: PayoutRecord[];
   };
+  apiKeys: ApiKeyRecord[];
+  billing: ConsumerBilling;
+}
+
+export interface TierPrice {
+  inputPer1k: number;
+  outputPer1k: number;
+}
+
+export interface ConsumerBilling {
+  enabled: boolean;
+  freeTier: number;
+  freeUsed: number;
+  freeRemaining: number;
+  creditsUsd: number;
+  workerRevenueShare: number;
+  emissionNoviqPer1k: number;
+  tiers: {
+    small: TierPrice;
+    mid: TierPrice;
+    large: TierPrice;
+  };
+}
+
+export interface ApiKeyRecord {
+  id: string;
+  key: string; // masked
+  label: string | null;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revoked: boolean;
+}
+
+export interface IssuedApiKey {
+  id: string;
+  key: string; // full secret, shown once
+  label: string | null;
+  createdAt: string;
 }
 
 export interface PayoutRecord {
@@ -148,6 +186,118 @@ export function requestPayout(accessToken: string): Promise<PayoutRecord> {
 /** Validate an EVM (0x…40 hex) address client-side. */
 export function isValidEvmAddress(address: string): boolean {
   return /^0x[0-9a-fA-F]{40}$/.test(address.trim());
+}
+
+// --- Public inference API keys ---
+
+export function createApiKey(
+  accessToken: string,
+  label?: string,
+): Promise<IssuedApiKey> {
+  return req("/v1/api-keys", {
+    method: "POST",
+    token: accessToken,
+    body: JSON.stringify({ label }),
+  });
+}
+
+export function revokeApiKey(
+  accessToken: string,
+  id: string,
+): Promise<{ revoked: boolean }> {
+  return req(`/v1/api-keys/${encodeURIComponent(id)}/revoke`, {
+    method: "POST",
+    token: accessToken,
+  });
+}
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+/**
+ * Call the public OpenAI-compatible chat API with an API key and stream the
+ * assistant reply token-by-token. Parses the OpenAI SSE format (`data: {…}`
+ * chunks terminated by `data: [DONE]`).
+ */
+export async function streamChatCompletion(
+  apiKey: string,
+  messages: ChatMessage[],
+  handlers: {
+    onToken: (t: string) => void;
+    onDone: () => void;
+    onError: (message: string) => void;
+  },
+  opts: { model?: string; maxTokens?: number; signal?: AbortSignal } = {},
+): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(`${ORCHESTRATOR_URL}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: opts.model,
+        messages,
+        stream: true,
+        max_tokens: opts.maxTokens,
+      }),
+      signal: opts.signal,
+    });
+  } catch (err) {
+    handlers.onError(err instanceof Error ? err.message : "Network error");
+    return;
+  }
+
+  if (!res.ok || !res.body) {
+    let message = `Request failed (${res.status})`;
+    try {
+      const body = (await res.json()) as { error?: { message?: string } };
+      if (body?.error?.message) message = body.error.message;
+    } catch {
+      /* ignore */
+    }
+    handlers.onError(message);
+    return;
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    const chunks = buffer.split("\n\n");
+    buffer = chunks.pop() ?? "";
+    for (const chunk of chunks) {
+      const dataLine = chunk.match(/^data: (.+)$/m);
+      if (!dataLine) continue;
+      const payload = dataLine[1].trim();
+      if (payload === "[DONE]") {
+        handlers.onDone();
+        return;
+      }
+      try {
+        const json = JSON.parse(payload);
+        const choice = json.choices?.[0];
+        const token = choice?.delta?.content;
+        if (typeof token === "string") handlers.onToken(token);
+        if (choice?.finish_reason === "error") {
+          handlers.onError("Inference failed on the worker.");
+          return;
+        }
+      } catch {
+        /* ignore malformed chunk */
+      }
+    }
+  }
+  handlers.onDone();
 }
 
 /**

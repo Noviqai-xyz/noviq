@@ -192,6 +192,7 @@ async function handleRegister(
     model: payload.model ?? null,
     connectedAt: Date.now(),
     lastHeartbeat: Date.now(),
+    busy: false,
   });
 
   ws.send(serialize({ type: "registered", workerId: row.id }));

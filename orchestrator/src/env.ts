@@ -15,6 +15,14 @@ function optional(name: string, fallback: string): string {
   return value && value.trim() !== "" ? value : fallback;
 }
 
+const isProd = process.env.NODE_ENV === "production";
+
+// Billing is metered only in production so localhost dev is always free.
+// Override explicitly with BILLING_ENABLED=true|false.
+const billingOverride = optional("BILLING_ENABLED", "");
+const billingEnabled =
+  billingOverride === "" ? isProd : billingOverride === "true";
+
 export const env = {
   port: Number(optional("PORT", "8787")),
   databaseUrl: required("DATABASE_URL"),
@@ -29,5 +37,24 @@ export const env = {
     .filter(Boolean),
   pingIntervalMs: Number(optional("PING_INTERVAL_SEC", "30")) * 1000,
   payoutThresholdUsd: Number(optional("PAYOUT_THRESHOLD_USD", "10")),
-  isProd: process.env.NODE_ENV === "production",
+  // Shared secret for admin-only routes (e.g. seed-worker token provisioning).
+  // Leave blank to disable those routes entirely.
+  adminSecret: optional("ADMIN_SECRET", ""),
+  isProd,
+  // --- consumer billing (public inference API) ---
+  billingEnabled,
+  // Free API requests per user before credits are required.
+  freeTierRequests: Number(optional("FREE_TIER_REQUESTS", "5")),
+  // Fraction of a job's market price paid to the worker (rest is platform margin).
+  // Clamped to [0,1]. Guarantees payout is always < revenue.
+  workerRevenueShare: Math.min(
+    1,
+    Math.max(0, Number(optional("WORKER_REVENUE_SHARE", "0.8"))),
+  ),
+  // Optional $NOVIQ emission reward per 1K tokens served (bootstrap subsidy).
+  // 0 = off until the token is deployed.
+  emissionNoviqPer1k: Number(optional("EMISSION_NOVIQ_PER_1K", "0")),
+  // Optional JSON override of the per-tier price table (see pricing.ts).
+  // e.g. {"small":{"inputPer1k":0.00008,"outputPer1k":0.0003}}
+  pricingJson: optional("PRICING_JSON", ""),
 } as const;

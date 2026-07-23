@@ -8,6 +8,17 @@ export function generateWorkerToken(): string {
   return `nvq_${randomBytes(24).toString("base64url")}`;
 }
 
+/** Synthetic account that owns first-party "seed" workers (the bootstrap fleet). */
+export const SEED_USER_ID = "system:seed";
+
+/** Ensure the seed user row exists so seed worker tokens satisfy the FK. */
+export async function ensureSeedUser(): Promise<void> {
+  await db
+    .insert(schema.users)
+    .values({ id: SEED_USER_ID, handle: "noviq-seed" })
+    .onConflictDoNothing();
+}
+
 export interface IssuedToken {
   token: string;
   workerClass: WorkerClass;

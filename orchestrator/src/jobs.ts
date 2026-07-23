@@ -62,12 +62,10 @@ export async function completeJob(
   jobId: string,
   userId: string,
   workerId: string,
-  workerClass: WorkerClass,
+  _workerClass: WorkerClass,
   usage: TokenUsage,
 ): Promise<void> {
-  const amountUsd = computeEarningUsd(workerClass, usage);
-
-  await db
+  const [updated] = await db
     .update(schema.jobs)
     .set({
       status: "done",
@@ -75,7 +73,11 @@ export async function completeJob(
       completionTokens: usage.completionTokens || 0,
       completedAt: new Date(),
     })
-    .where(eq(schema.jobs.id, jobId));
+    .where(eq(schema.jobs.id, jobId))
+    .returning({ model: schema.jobs.model });
+
+  // Worker payout is a revenue share of the job's market price (by model tier).
+  const amountUsd = computeEarningUsd(updated?.model ?? null, usage);
 
   await db.insert(schema.earnings).values({
     userId,

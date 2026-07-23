@@ -5,7 +5,13 @@ import { SiteFooter, SiteHeader } from "../components/layout/site-chrome";
 import { Reveal } from "../components/util/reveal";
 import { useEarn } from "../lib/use-earn";
 import { useBrowserWorker } from "../lib/use-browser-worker";
-import { isValidEvmAddress, type UserStats } from "../lib/orchestrator";
+import { Link } from "react-router";
+import {
+  isValidEvmAddress,
+  ORCHESTRATOR_URL,
+  type IssuedApiKey,
+  type UserStats,
+} from "../lib/orchestrator";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -25,7 +31,10 @@ function useMounted() {
 }
 
 function fmtUsd(n: number | undefined) {
-  return `$${(n ?? 0).toFixed(2)}`;
+  const v = n ?? 0;
+  // Per-token earnings are often sub-cent; show enough precision to be visible.
+  if (v > 0 && v < 0.01) return `$${v.toFixed(4)}`;
+  return `$${v.toFixed(2)}`;
 }
 
 function fmtUptime(seconds: number | undefined) {
@@ -40,8 +49,16 @@ function fmtUptime(seconds: number | undefined) {
 export default function EarnPage() {
   const mounted = useMounted();
   const { authenticated, login } = usePrivy();
-  const { stats, network, getToken, testJob, savePayoutAddress, withdraw } =
-    useEarn();
+  const {
+    stats,
+    network,
+    getToken,
+    testJob,
+    savePayoutAddress,
+    withdraw,
+    newApiKey,
+    removeApiKey,
+  } = useEarn();
 
   const online = (stats?.workersOnline ?? 0) > 0;
 
@@ -108,8 +125,9 @@ export default function EarnPage() {
               Two ways to contribute
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-[#8a8a8a] md:text-base">
-              Native runs in the background and pays up to 10× more per job.
-              Browser runs in this tab - one click, no terminal.
+              You earn a share of every token you serve, paid in USDG or $NOVIQ.
+              Native serves the largest models at the top rate; browser runs in
+              this tab - one click, no terminal.
             </p>
           </div>
         </Reveal>
@@ -128,6 +146,40 @@ export default function EarnPage() {
               login={login}
               getToken={getToken}
             />
+          </Reveal>
+        </div>
+
+        {/* Build on the network - the consumer side (API keys + playground) */}
+        <Reveal>
+          <div className="mt-20 max-w-2xl">
+            <p className="section-index">Build on the network</p>
+            <h2 className="mt-4 text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em]">
+              Use the inference API
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-[#8a8a8a] md:text-base">
+              An OpenAI-compatible endpoint served by the network. Create a key,
+              point any OpenAI client at it, or try it in the{" "}
+              <Link to="/playground" className="text-[#D4F3FF] underline-offset-4 hover:underline">
+                playground
+              </Link>
+              .
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+          <Reveal variant="left">
+            <ApiKeysCard
+              authenticated={authenticated}
+              login={login}
+              keys={stats?.apiKeys ?? []}
+              billing={stats?.billing}
+              create={newApiKey}
+              revoke={removeApiKey}
+            />
+          </Reveal>
+          <Reveal variant="right">
+            <ApiUsageCard />
           </Reveal>
         </div>
       </main>
@@ -474,6 +526,241 @@ function TestJobPanel({
   );
 }
 
+function ApiKeysCard({
+  authenticated,
+  login,
+  keys,
+  billing,
+  create,
+  revoke,
+}: {
+  authenticated: boolean;
+  login: () => void;
+  keys: UserStats["apiKeys"];
+  billing: UserStats["billing"] | undefined;
+  create: (label?: string) => Promise<IssuedApiKey>;
+  revoke: (id: string) => Promise<void>;
+}) {
+  const [label, setLabel] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [fresh, setFresh] = useState<IssuedApiKey | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const live = keys.filter((k) => !k.revoked);
+
+  const onCreate = useCallback(async () => {
+    if (!authenticated) return login();
+    if (busy) return;
+    setBusy(true);
+    setErr(null);
+    setFresh(null);
+    try {
+      const issued = await create(label.trim() || undefined);
+      setFresh(issued);
+      setLabel("");
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed to create key");
+    } finally {
+      setBusy(false);
+    }
+  }, [authenticated, login, busy, create, label]);
+
+  const copy = useCallback(() => {
+    if (!fresh) return;
+    void navigator.clipboard?.writeText(fresh.key);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }, [fresh]);
+
+  return (
+    <article className="card glass-panel flex h-full flex-col rounded-[1.75rem] p-8">
+      <div className="flex items-start justify-between">
+        <h3 className="text-xl font-semibold tracking-[-0.02em]">API keys</h3>
+        <span className="glass-tag glass-tag-neutral">OpenAI-compatible</span>
+      </div>
+      <p className="mt-4 text-[15px] leading-relaxed text-[#8a8a8a]">
+        Authenticate requests to <code className="text-[#D4F3FF]">/v1/chat/completions</code>.
+        The full secret is shown once - store it safely.
+      </p>
+
+      {billing && <BillingStrip billing={billing} />}
+
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <input
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="Key label (optional) e.g. my-app"
+          spellCheck={false}
+          className="w-full rounded-2xl border border-white/[0.08] bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-[#4a4a4a]"
+        />
+        <button
+          type="button"
+          onClick={onCreate}
+          disabled={busy}
+          className="btn-primary shrink-0 px-6 disabled:opacity-40"
+        >
+          {busy ? "Creating…" : authenticated ? "Create key" : "Sign in"}
+        </button>
+      </div>
+
+      {fresh && (
+        <div className="mt-4 rounded-2xl border border-[rgba(126,214,255,0.25)] bg-black/50 p-4">
+          <p className="text-xs text-[#6f6f6f]">
+            Your new key (copy it now - you won&apos;t see it again):
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <code className="flex-1 overflow-x-auto text-xs text-[#D4F3FF]">
+              {fresh.key}
+            </code>
+            <button
+              type="button"
+              onClick={copy}
+              className="shrink-0 rounded-full border border-white/[0.12] px-3 py-1 text-xs text-[#D4F3FF] hover:border-white/30"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {err && <p className="mt-3 text-xs text-[#ff9b9b]">{err}</p>}
+
+      {live.length > 0 && (
+        <ul className="mt-6 space-y-2">
+          {live.map((k) => (
+            <li
+              key={k.id}
+              className="flex items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-black/40 px-4 py-3"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-mono text-sm text-[#c9c9c9]">{k.key}</p>
+                <p className="text-xs text-[#6f6f6f]">
+                  {k.label ? `${k.label} · ` : ""}
+                  {k.lastUsedAt ? "used" : "never used"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => void revoke(k.id)}
+                className="shrink-0 rounded-full border border-white/[0.1] px-3 py-1 text-xs text-[#8a8a8a] hover:border-[#ff9b9b]/40 hover:text-[#ff9b9b]"
+              >
+                Revoke
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
+  );
+}
+
+function BillingStrip({ billing }: { billing: UserStats["billing"] }) {
+  if (!billing.enabled) {
+    return (
+      <div className="mt-5 flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-black/40 px-4 py-3 text-[13px] text-[#8a8a8a]">
+        <span className="h-2 w-2 rounded-full bg-[#5ce6a5]" />
+        Free in this environment - no billing enforced.
+      </div>
+    );
+  }
+  const pct = Math.min(
+    100,
+    Math.round((billing.freeRemaining / Math.max(1, billing.freeTier)) * 100),
+  );
+  const outOfFree = billing.freeRemaining <= 0;
+  // Prices are stored per 1K tokens; show the friendlier per-1M figure.
+  const per1m = (v: number) => `$${(v * 1000).toFixed(2)}`;
+  const tiers: Array<[string, { inputPer1k: number; outputPer1k: number }]> = [
+    ["Small (~8B)", billing.tiers.small],
+    ["Mid (~34B)", billing.tiers.mid],
+    ["Large (~70B)", billing.tiers.large],
+  ];
+  return (
+    <div className="mt-5 rounded-2xl border border-white/[0.06] bg-black/40 p-4">
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-[#c9c9c9]">
+          {billing.freeRemaining} / {billing.freeTier} free requests left
+        </span>
+        <span className="text-[#8a8a8a]">
+          Credits{" "}
+          <span className="text-[#D4F3FF]">${billing.creditsUsd.toFixed(2)}</span>
+        </span>
+      </div>
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]">
+        <div
+          className="h-full rounded-full bg-[#7ED6FF] transition-[width] duration-500"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+
+      <div className="mt-4 border-t border-white/[0.06] pt-3">
+        <p className="text-[13px] text-[#6f6f6f]">
+          Pay per token in USDG or $NOVIQ (per 1M tokens, in / out):
+        </p>
+        <ul className="mt-2 space-y-1 text-[13px]">
+          {tiers.map(([name, p]) => (
+            <li key={name} className="flex items-center justify-between">
+              <span className="text-[#8a8a8a]">{name}</span>
+              <span className="font-mono text-[#c9c9c9]">
+                {per1m(p.inputPer1k)} / {per1m(p.outputPer1k)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {outOfFree && billing.creditsUsd <= 0 && (
+        <p className="mt-3 text-[13px] text-[#8a8a8a]">
+          Free tier used - credit top-ups go live with the $NOVIQ token deployment.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ApiUsageCard() {
+  const [copied, setCopied] = useState(false);
+  const snippet = `curl ${ORCHESTRATOR_URL}/v1/chat/completions \\
+  -H "Authorization: Bearer $NOVIQ_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "messages": [{"role": "user", "content": "Hello from Noviq"}],
+    "stream": true
+  }'`;
+
+  const copy = useCallback(() => {
+    void navigator.clipboard?.writeText(snippet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }, [snippet]);
+
+  return (
+    <article className="card glass-panel flex h-full flex-col rounded-[1.75rem] p-8">
+      <div className="flex items-start justify-between">
+        <h3 className="text-xl font-semibold tracking-[-0.02em]">Quickstart</h3>
+        <button
+          type="button"
+          onClick={copy}
+          className="shrink-0 rounded-full border border-white/[0.12] px-3 py-1 text-xs text-[#D4F3FF] hover:border-white/30"
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <p className="mt-4 text-[15px] leading-relaxed text-[#8a8a8a]">
+        Any OpenAI SDK works - just set the base URL and your key.
+      </p>
+      <pre className="mt-6 flex-1 overflow-x-auto rounded-2xl border border-white/[0.06] bg-black/50 p-4 text-xs leading-relaxed text-[#a3a3a3]">
+        <code>{snippet}</code>
+      </pre>
+      <p className="mt-4 text-xs text-[#6f6f6f]">
+        Base URL <code className="text-[#c9c9c9]">{ORCHESTRATOR_URL}/v1</code> ·
+        model optional (routed to an available worker).
+      </p>
+    </article>
+  );
+}
+
 const NODE_INSTALL: Record<string, string> = {
   macOS: "brew install node",
   Windows: "winget install OpenJS.NodeJS",
@@ -525,9 +812,11 @@ function NativeWorkerCard({
         <span className="glass-tag">Recommended</span>
       </div>
       <p className="mt-4 text-2xl font-semibold text-[#D4F3FF]">
-        $0.10-0.14 <span className="text-sm text-[#8a8a8a]">/ job</span>
+        Highest rate <span className="text-sm text-[#8a8a8a]">per token</span>
       </p>
-      <p className="mt-1 text-[13px] text-[#6f6f6f]">Up to 10× browser earnings</p>
+      <p className="mt-1 text-[13px] text-[#6f6f6f]">
+        Serves the largest models - paid in USDG or $NOVIQ
+      </p>
       <p className="mt-5 text-[15px] leading-relaxed text-[#8a8a8a]">
         Runs the biggest models on your own GPU in the background via Ollama - no
         tab to keep open. The highest-paying jobs on the network.
@@ -640,9 +929,9 @@ function BrowserWorkerCard({
         </span>
       </div>
       <p className="mt-4 text-2xl font-semibold text-[#D4F3FF]">
-        $0.07 <span className="text-sm text-[#8a8a8a]">/ job</span>
+        Entry rate <span className="text-sm text-[#8a8a8a]">per token</span>
       </p>
-      <p className="mt-1 text-[13px] text-[#6f6f6f]">Zero install</p>
+      <p className="mt-1 text-[13px] text-[#6f6f6f]">Zero install - smaller models</p>
       <p className="mt-5 text-[15px] leading-relaxed text-[#8a8a8a]">
         Runs a Qwen model right in this tab using WebGPU. Easiest to start, but
         earns far less than native - and only while the tab stays open.

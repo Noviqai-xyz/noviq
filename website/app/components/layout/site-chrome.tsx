@@ -62,15 +62,16 @@ const socialLinks = [
   { label: "GitHub", href: "https://github.com/Noviqai-xyz", Icon: GithubIcon },
 ];
 
-const primaryLinks = [
+const primaryLinks: { label: string; href: string; external?: boolean }[] = [
   { label: "Product", href: "#products" },
   { label: "Earn", href: "/earn" },
+  { label: "Data", href: DATA_URL, external: true },
+  { label: "Docs", href: DOCS_URL, external: true },
 ];
 
 const noviqMenuItems = [
   { label: "Staking", href: "/staking" },
   { label: "Treasury", href: "/treasury" },
-  { label: "Data", href: DATA_URL, external: true },
 ];
 
 function MenuToggle({
@@ -124,8 +125,8 @@ export function SiteHeader() {
 
   // Flat list used for the staggered mobile menu.
   const mobileLinks = [
-    ...primaryLinks.map((l) => ({ ...l, external: false })),
-    ...noviqMenuItems,
+    ...primaryLinks.map((l) => ({ ...l, external: l.external ?? false })),
+    ...noviqMenuItems.map((l) => ({ ...l, external: false })),
   ];
 
   return (
@@ -144,6 +145,7 @@ export function SiteHeader() {
             <a
               key={l.label}
               href={l.href}
+              {...(l.external ? { target: "_blank", rel: "noreferrer" } : {})}
               className="transition-colors duration-300 hover:text-white"
             >
               {l.label}

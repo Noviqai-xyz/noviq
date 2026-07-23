@@ -16,6 +16,11 @@ export const users = pgTable("users", {
   handle: text("handle"),
   payoutAddress: text("payout_address"), // EVM wallet for withdrawals
   payoutChainId: integer("payout_chain_id"),
+  // --- consumer billing for the public inference API ---
+  apiFreeUsed: integer("api_free_used").notNull().default(0), // free requests consumed
+  creditsUsd: numeric("credits_usd", { precision: 12, scale: 6 })
+    .notNull()
+    .default("0"), // prepaid balance (USD-equivalent, funded in USDG / $NOVIQ)
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -117,6 +122,48 @@ export const earnings = pgTable(
   (t) => ({
     byUser: index("earnings_user_idx").on(t.userId),
     byCreated: index("earnings_created_idx").on(t.createdAt),
+  }),
+);
+
+/** An API key for a consumer to call the public inference API. */
+export const apiKeys = pgTable(
+  "api_keys",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    key: text("key").notNull().unique(), // opaque secret (like worker tokens)
+    label: text("label"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  },
+  (t) => ({
+    byUser: index("api_keys_user_idx").on(t.userId),
+  }),
+);
+
+/** Consumer credit movements: grants, deposits (USDG / $NOVIQ), and API charges. */
+export const creditLedger = pgTable(
+  "credit_ledger",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    deltaUsd: numeric("delta_usd", { precision: 12, scale: 6 }).notNull(), // + credit, - charge
+    kind: text("kind").notNull(), // grant | deposit | charge
+    currency: text("currency"), // USDG | NOVIQ | USD
+    ref: text("ref"), // job id, tx hash, etc.
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => ({
+    byUser: index("credit_ledger_user_idx").on(t.userId),
   }),
 );
 

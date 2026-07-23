@@ -1,6 +1,8 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { db, schema } from "./db/index.js";
 import { maskToken } from "./auth/tokens.js";
+import { listApiKeys, type ApiKeyRow } from "./auth/api-keys.js";
+import { getConsumerBilling, type ConsumerBilling } from "./billing.js";
 import { registry } from "./registry.js";
 import {
   getBalance,
@@ -38,6 +40,8 @@ export interface UserStats {
     canRequest: boolean;
     history: PayoutRow[];
   };
+  apiKeys: ApiKeyRow[];
+  billing: ConsumerBilling;
 }
 
 function startOfUtcToday(): Date {
@@ -101,11 +105,14 @@ export async function getUserStats(userId: string): Promise<UserStats> {
     .where(eq(schema.workerTokens.userId, userId))
     .orderBy(desc(schema.workerTokens.createdAt));
 
-  const [{ availableUsd }, payoutAddr, payoutHistory] = await Promise.all([
-    getBalance(userId),
-    getPayoutAddress(userId),
-    listPayouts(userId),
-  ]);
+  const [{ availableUsd }, payoutAddr, payoutHistory, apiKeys, billing] =
+    await Promise.all([
+      getBalance(userId),
+      getPayoutAddress(userId),
+      listPayouts(userId),
+      listApiKeys(userId),
+      getConsumerBilling(userId),
+    ]);
 
   return {
     earnedTodayUsd: Number(todayRow?.total ?? 0),
@@ -136,6 +143,8 @@ export async function getUserStats(userId: string): Promise<UserStats> {
         Boolean(payoutAddr.address) && availableUsd >= PAYOUT_THRESHOLD_USD,
       history: payoutHistory,
     },
+    apiKeys,
+    billing,
   };
 }
 

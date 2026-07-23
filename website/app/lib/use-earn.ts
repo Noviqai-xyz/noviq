@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import {
+  createApiKey,
   getMyStats,
   getNetworkStats,
   requestPayout,
   requestWorkerToken,
+  revokeApiKey,
   runTestJob,
   setPayoutAddress,
+  type IssuedApiKey,
   type NetworkStats,
   type UserStats,
   type WorkerClass,
@@ -97,6 +100,27 @@ export function useEarn() {
     await refreshStats();
   }, [getAccessToken, refreshStats]);
 
+  const newApiKey = useCallback(
+    async (label?: string): Promise<IssuedApiKey> => {
+      const token = await getAccessToken();
+      if (!token) throw new Error("Sign in first");
+      const issued = await createApiKey(token, label);
+      await refreshStats();
+      return issued;
+    },
+    [getAccessToken, refreshStats],
+  );
+
+  const removeApiKey = useCallback(
+    async (id: string): Promise<void> => {
+      const token = await getAccessToken();
+      if (!token) throw new Error("Sign in first");
+      await revokeApiKey(token, id);
+      await refreshStats();
+    },
+    [getAccessToken, refreshStats],
+  );
+
   return {
     stats,
     network,
@@ -106,5 +130,7 @@ export function useEarn() {
     testJob,
     savePayoutAddress,
     withdraw,
+    newApiKey,
+    removeApiKey,
   };
 }

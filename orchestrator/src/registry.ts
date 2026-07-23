@@ -9,6 +9,7 @@ export interface ConnectedWorker {
   model: ModelInfo | null;
   connectedAt: number;
   lastHeartbeat: number;
+  busy: boolean;
 }
 
 export interface PendingJob {
@@ -57,17 +58,43 @@ class Registry {
     return this.all().filter((w) => w.userId === userId);
   }
 
-  counts(): { total: number; native: number; browser: number } {
+  /** Pick an available (not busy) worker, preferring one that serves `model`. */
+  pickAvailable(opts?: {
+    model?: string;
+    workerClass?: WorkerClass;
+  }): ConnectedWorker | undefined {
+    const free = this.all().filter((w) => !w.busy);
+    const pool = opts?.workerClass
+      ? free.filter((w) => w.workerClass === opts.workerClass)
+      : free;
+    if (pool.length === 0) return undefined;
+
+    if (opts?.model) {
+      const wanted = opts.model.toLowerCase();
+      const match = pool.find((w) => {
+        const id = w.model?.id?.toLowerCase() ?? "";
+        const ref = w.model?.ref?.toLowerCase() ?? "";
+        return id === wanted || ref === wanted || ref.includes(wanted);
+      });
+      if (match) return match;
+    }
+    return pool[0];
+  }
+
+  counts(): { total: number; native: number; browser: number; busy: number } {
     const all = this.all();
     return {
       total: all.length,
       native: all.filter((w) => w.workerClass === "native").length,
       browser: all.filter((w) => w.workerClass === "browser").length,
+      busy: all.filter((w) => w.busy).length,
     };
   }
 
   addJob(job: PendingJob): void {
     this.jobs.set(job.jobId, job);
+    const w = this.workers.get(job.workerId);
+    if (w) w.busy = true;
   }
 
   getJob(jobId: string): PendingJob | undefined {
@@ -75,6 +102,11 @@ class Registry {
   }
 
   removeJob(jobId: string): void {
+    const job = this.jobs.get(jobId);
+    if (job) {
+      const w = this.workers.get(job.workerId);
+      if (w) w.busy = false;
+    }
     this.jobs.delete(jobId);
   }
 

@@ -2,6 +2,7 @@ import cors from "@fastify/cors";
 import Fastify from "fastify";
 import { env } from "./env.js";
 import { registerRoutes } from "./http/routes.js";
+import { registerChatRoutes } from "./http/chat.js";
 import { attachWorkerWs, resetStaleWorkers } from "./ws/server.js";
 
 async function main() {
@@ -16,6 +17,7 @@ async function main() {
   });
 
   registerRoutes(app);
+  registerChatRoutes(app);
 
   await app.ready();
 
