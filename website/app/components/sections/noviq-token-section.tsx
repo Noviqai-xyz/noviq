@@ -42,7 +42,7 @@ export function NoviqTokenSection() {
           {tokenPillars.map((pillar, i) => (
             <Reveal
               key={pillar.number}
-              delay={i * 120}
+              delay={i * 60}
               variant="scale"
               className="h-full"
             >

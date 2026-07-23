@@ -77,7 +77,7 @@ export function PrivateInferenceSection() {
           {provenPillars.map((pillar, i) => (
             <Reveal
               key={pillar.title}
-              delay={i * 100}
+              delay={i * 60}
               variant={i === 0 ? "left" : "right"}
             >
               <article className="card glass-panel h-full rounded-[1.75rem] p-8 md:p-9">

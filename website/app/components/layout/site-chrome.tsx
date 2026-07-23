@@ -22,7 +22,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
 }
 
 const noviqMenuItems = [
-  { label: "Staking", href: "#token-staking" },
+  { label: "Staking", href: "/staking" },
   { label: "Treasury", href: "#token-treasury" },
   { label: "Data", href: DATA_URL, external: true },
 ];
@@ -48,14 +48,14 @@ export function SiteHeader() {
           </a>
 
           <div className="nav-dropdown group relative">
-            <a
-              href="#token"
-              className="inline-flex items-center gap-1.5 transition-colors duration-300 group-hover:text-white"
+            <button
+              type="button"
+              className="inline-flex cursor-pointer items-center gap-1.5 bg-transparent p-0 text-inherit transition-colors duration-300 group-hover:text-white group-focus-within:text-white"
               aria-haspopup="true"
             >
               $NOVIQ
               <ChevronDownIcon className="nav-dropdown-chevron h-3.5 w-3.5 text-[#5c5c5c] transition-[transform,color] duration-300 group-hover:text-white group-focus-within:text-white" />
-            </a>
+            </button>
             <div className="nav-dropdown-panel pointer-events-none absolute left-1/2 top-full z-50 w-44 -translate-x-1/2 pt-3 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
               <div className="glass-panel overflow-hidden rounded-2xl border border-white/[0.1] bg-black/95 py-2 shadow-[0_24px_48px_rgba(0,0,0,0.5)]">
                 {noviqMenuItems.map((item) => (

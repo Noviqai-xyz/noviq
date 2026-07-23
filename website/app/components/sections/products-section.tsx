@@ -51,11 +51,11 @@ export function ProductsSection() {
           {products.map((product, i) => (
             <Reveal
               key={product.title}
-              delay={i * 120}
+              delay={i * 60}
               variant="scale"
-              className="h-full"
+              className="h-full min-w-0"
             >
-              <article className="card glass-panel flex h-full flex-col rounded-3xl p-8">
+              <article className="card glass-panel flex h-full min-w-0 flex-col rounded-3xl p-8">
                 <div className="flex items-start justify-between">
                   <product.Glyph className="h-12 w-12" />
                   <span
@@ -81,7 +81,7 @@ export function ProductsSection() {
                 </p>
 
                 {product.command ? (
-                  <pre className="mt-4 overflow-x-auto rounded-2xl border border-white/[0.06] bg-black/40 p-4 text-xs leading-relaxed text-[#a3a3a3]">
+                  <pre className="mt-4 overflow-hidden rounded-2xl border border-white/[0.06] bg-black/40 p-4 text-xs leading-relaxed whitespace-pre-wrap break-all text-[#a3a3a3]">
                     <code>{product.command}</code>
                   </pre>
                 ) : null}
