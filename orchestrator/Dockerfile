@@ -13,12 +13,12 @@ COPY data/package.json ./data/
 COPY website/package.json ./website/
 COPY noviq_client/package.json ./noviq_client/
 COPY orchestrator/package.json ./orchestrator/
-RUN pnpm install --frozen-lockfile --filter @noviq/orchestrator...
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @noviq/orchestrator...
 
 # --- build ---
 FROM deps AS build
 COPY orchestrator ./orchestrator
-RUN pnpm --filter @noviq/orchestrator build
+RUN pnpm --config.verify-deps-before-run=false --filter @noviq/orchestrator build
 
 # --- production deps only ---
 FROM base AS prod-deps
@@ -27,7 +27,7 @@ COPY data/package.json ./data/
 COPY website/package.json ./website/
 COPY noviq_client/package.json ./noviq_client/
 COPY orchestrator/package.json ./orchestrator/
-RUN pnpm install --frozen-lockfile --prod --filter @noviq/orchestrator...
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts --filter @noviq/orchestrator...
 
 # --- runtime ---
 FROM base
