@@ -36,7 +36,7 @@ export function PrivateInferenceSection() {
         </Reveal>
 
         {/* 02 — How it leaks: the big liquid-glass explainer */}
-        <Reveal delay={80}>
+        <Reveal delay={80} variant="scale">
           <LiquidPanel className="mt-16 md:mt-20">
             <div className="p-8 md:p-14">
               <div className="max-w-2xl">
@@ -59,7 +59,7 @@ export function PrivateInferenceSection() {
         </Reveal>
 
         {/* The unsolved one — Private */}
-        <Reveal delay={60}>
+        <Reveal delay={60} variant="left">
           <article className="card glass-panel mt-6 rounded-[1.75rem] border-[rgba(126,214,255,0.18)] p-8 md:p-10">
             <p className="section-index text-[#7ED6FF]/70">The unsolved one</p>
             <h3 className="mt-3 text-2xl font-semibold tracking-[-0.02em] text-[#D4F3FF] md:text-3xl">
@@ -75,7 +75,11 @@ export function PrivateInferenceSection() {
         {/* Proven pillars */}
         <div className="mt-6 grid gap-4 md:grid-cols-2 md:gap-5">
           {provenPillars.map((pillar, i) => (
-            <Reveal key={pillar.title} delay={i * 100}>
+            <Reveal
+              key={pillar.title}
+              delay={i * 100}
+              variant={i === 0 ? "left" : "right"}
+            >
               <article className="card glass-panel h-full rounded-[1.75rem] p-8 md:p-9">
                 <div className="flex items-center gap-4">
                   <pillar.Glyph className="h-11 w-11 shrink-0" />
@@ -92,7 +96,7 @@ export function PrivateInferenceSection() {
         </div>
 
         {/* Close */}
-        <Reveal>
+        <Reveal variant="fade">
           <p className="mt-14 max-w-2xl text-lg leading-relaxed text-[#a3a3a3] md:mt-16 md:text-xl">
             Privacy isn&apos;t a feature to bolt on later. It&apos;s the open
             problem — and the one{" "}

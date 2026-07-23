@@ -9,7 +9,7 @@ const products = [
     line: "Background GPU via Ollama or vLLM. The biggest models, the highest pay.",
     rate: "$0.10–0.14 / job",
     cta: "Get install command",
-    command: "npx @noviqai/worker --token YOUR_TOKEN",
+    command: "npx @noviq/worker --token YOUR_TOKEN",
     Glyph: TerminalGlyph,
   },
   {
@@ -49,7 +49,12 @@ export function ProductsSection() {
 
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {products.map((product, i) => (
-            <Reveal key={product.title} delay={i * 100} className="h-full">
+            <Reveal
+              key={product.title}
+              delay={i * 120}
+              variant="scale"
+              className="h-full"
+            >
               <article className="card glass-panel flex h-full flex-col rounded-3xl p-8">
                 <div className="flex items-start justify-between">
                   <product.Glyph className="h-12 w-12" />

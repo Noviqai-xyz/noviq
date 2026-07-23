@@ -6,20 +6,39 @@ import {
   type ReactNode,
 } from "react";
 
+type RevealVariant = "up" | "left" | "right" | "scale" | "fade";
+
+const VARIANT_CLASS: Record<RevealVariant, string> = {
+  up: "",
+  left: "reveal-left",
+  right: "reveal-right",
+  scale: "reveal-scale",
+  fade: "reveal-fade",
+};
+
 interface RevealProps {
   children: ReactNode;
   className?: string;
   /** Stagger delay in milliseconds. */
   delay?: number;
+  /** Entrance direction / effect. Defaults to a lift ("up"). */
+  variant?: RevealVariant;
   style?: CSSProperties;
 }
 
 /**
- * Fades + lifts its children into view once, when scrolled near the viewport.
- * Renders visible immediately if IntersectionObserver is unavailable (SSR / old
- * browsers) and respects prefers-reduced-motion via CSS.
+ * Fades + lifts (or slides / scales, per `variant`) its children into view once,
+ * when scrolled near the viewport. Renders visible immediately if
+ * IntersectionObserver is unavailable (SSR / old browsers) and respects
+ * prefers-reduced-motion via CSS.
  */
-export function Reveal({ children, className = "", delay = 0, style }: RevealProps) {
+export function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  variant = "up",
+  style,
+}: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -49,7 +68,9 @@ export function Reveal({ children, className = "", delay = 0, style }: RevealPro
   return (
     <div
       ref={ref}
-      className={`reveal ${visible ? "is-visible" : ""} ${className}`}
+      className={`reveal ${VARIANT_CLASS[variant]} ${
+        visible ? "is-visible" : ""
+      } ${className}`}
       style={{ transitionDelay: `${delay}ms`, ...style }}
     >
       {children}

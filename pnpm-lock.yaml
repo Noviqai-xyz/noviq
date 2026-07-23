@@ -56,13 +56,13 @@ importers:
 
   noviq_client:
     dependencies:
-      '@mlc-ai/web-llm':
-        specifier: ^0.2.84
-        version: 0.2.84
       ws:
         specifier: ^8.19.0
         version: 8.21.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     devDependencies:
+      '@mlc-ai/web-llm':
+        specifier: ^0.2.84
+        version: 0.2.84
       '@types/node':
         specifier: ^22
         version: 22.20.1

@@ -1,5 +1,5 @@
 {
-  "name": "@noviqai/worker",
+  "name": "@noviq/worker",
   "version": "0.1.0",
   "description": "Noviq AI worker client — native (Ollama) and browser (WebLLM) inference",
   "license": "MIT",
@@ -22,7 +22,7 @@
   "type": "module",
   "sideEffects": false,
   "bin": {
-    "noviq-worker": "./dist/cli.js"
+    "noviq-worker": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

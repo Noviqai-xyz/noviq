@@ -40,7 +40,12 @@ export function NoviqTokenSection() {
 
         <div className="mx-auto mt-12 grid max-w-5xl gap-5 md:grid-cols-3">
           {tokenPillars.map((pillar, i) => (
-            <Reveal key={pillar.number} delay={i * 100} className="h-full">
+            <Reveal
+              key={pillar.number}
+              delay={i * 120}
+              variant="scale"
+              className="h-full"
+            >
               <article
                 id={pillar.anchorId}
                 className="card glass-panel flex h-full flex-col rounded-[1.75rem] p-8 scroll-mt-24"
@@ -59,7 +64,7 @@ export function NoviqTokenSection() {
           ))}
         </div>
 
-        <Reveal>
+        <Reveal variant="fade">
           <div className="mx-auto mt-12 text-center">
             <a
               href="https://docs.noviqai.xyz/token"

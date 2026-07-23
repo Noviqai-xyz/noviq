@@ -6,17 +6,31 @@ export function HeroSection() {
       <HeroVisual />
       <div className="page-shell relative z-10 py-20 md:py-28">
         <div className="max-w-3xl">
-          <p className="reveal is-visible label-caps">Private inference network</p>
-          <h1 className="reveal is-visible mt-6 text-[clamp(2.75rem,7vw,5.5rem)] font-semibold leading-[0.98] tracking-[-0.035em]">
+          <p
+            className="load-rise label-caps"
+            style={{ animationDelay: "0.1s" }}
+          >
+            Private inference network
+          </p>
+          <h1
+            className="load-rise mt-6 text-[clamp(2.75rem,7vw,5.5rem)] font-semibold leading-[0.98] tracking-[-0.035em]"
+            style={{ animationDelay: "0.24s" }}
+          >
             Private inference,
             <br />
             <span className="text-gradient">actually proven.</span>
           </h1>
-          <p className="reveal is-visible mt-7 max-w-lg text-lg leading-relaxed text-[#a3a3a3] md:text-xl">
+          <p
+            className="load-rise mt-7 max-w-lg text-lg leading-relaxed text-[#a3a3a3] md:text-xl"
+            style={{ animationDelay: "0.42s" }}
+          >
             Uncensored and decentralized — and the first network built to prove
             your prompts stay private.
           </p>
-          <div className="reveal is-visible mt-10 flex flex-wrap gap-4">
+          <div
+            className="load-rise mt-10 flex flex-wrap gap-4"
+            style={{ animationDelay: "0.58s" }}
+          >
             <a href="#problem" className="btn-primary">
               See the problem
             </a>
@@ -28,7 +42,10 @@ export function HeroSection() {
       </div>
 
       {/* Scroll cue */}
-      <div className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 md:block">
+      <div
+        className="load-fade absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 md:block"
+        style={{ animationDelay: "1s" }}
+      >
         <span className="label-caps animate-float">scroll</span>
       </div>
     </section>

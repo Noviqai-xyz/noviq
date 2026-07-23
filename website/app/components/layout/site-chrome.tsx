@@ -29,7 +29,7 @@ const noviqMenuItems = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-black/70 backdrop-blur-xl">
+    <header className="load-fade sticky top-0 z-50 border-b border-white/[0.06] bg-black/70 backdrop-blur-xl">
       <div className="page-shell flex items-center justify-between py-5 md:py-6">
         <a href="#" className="flex items-center gap-3.5">
           <img

@@ -1,6 +1,6 @@
-# @noviqai/worker
+# @noviq/worker
 
-Worker software every Noviq contributor runs — native CLI (Ollama) and browser worker (WebLLM). Published to npm; run the native worker with `npx @noviqai/worker --token YOUR_TOKEN`.
+Worker software every Noviq contributor runs — native CLI (Ollama) and browser worker (WebLLM). Published to npm; run the native worker with `npx @noviq/worker --token YOUR_TOKEN`.
 
 ## Modes
 
@@ -21,16 +21,16 @@ Get your worker token by signing in at [noviqai.xyz](https://noviqai.xyz) (email
 
 ```bash
 pnpm install
-pnpm --filter @noviqai/worker build
+pnpm --filter @noviq/worker build
 
 # Development (tsx)
-pnpm --filter @noviqai/worker dev -- --token YOUR_TOKEN --model qwen2.5:27b --pull
+pnpm --filter @noviq/worker dev -- --token YOUR_TOKEN --model qwen2.5:27b --pull
 
 # Production binary
-pnpm --filter @noviqai/worker start -- --token YOUR_TOKEN
+pnpm --filter @noviq/worker start -- --token YOUR_TOKEN
 
-# Published (target)
-npx @noviqai/worker --token YOUR_TOKEN
+# Published
+npx @noviq/worker --token YOUR_TOKEN
 ```
 
 ### CLI options
@@ -53,7 +53,7 @@ Runs a smaller model in-tab over WebGPU via [@mlc-ai/web-llm](https://github.com
 Import from the browser subpath inside `noviqai.xyz`:
 
 ```typescript
-import { createBrowserWorker } from "@noviqai/worker/browser";
+import { createBrowserWorker } from "@noviq/worker/browser";
 
 const worker = await createBrowserWorker({
   orchestratorUrl: "wss://orchestrator.noviqai.xyz/v1/worker",

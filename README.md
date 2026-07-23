@@ -6,7 +6,7 @@ Inference network powered by contributed compute — [noviqai.xyz](https://noviq
 |---------|---------------|---------|
 | `noviq-website` | [noviqai.xyz](https://noviqai.xyz) | Landing page + app (API, browser worker, native worker) |
 | `noviq-data` | [data.noviqai.xyz](https://data.noviqai.xyz) | Public network data and analytics |
-| `@noviqai/worker` | CLI / browser library (npm) | Contributor worker (Ollama native, WebLLM browser) |
+| `@noviq/worker` | CLI / browser library (npm) | Contributor worker (Ollama native, WebLLM browser) |
 
 ## Development
 
@@ -20,7 +20,7 @@ pnpm --filter noviq-website dev
 pnpm --filter noviq-data dev
 
 # Native worker (requires a worker token + Ollama)
-pnpm --filter @noviqai/worker dev -- --token YOUR_TOKEN --model qwen2.5:27b --pull
+pnpm --filter @noviq/worker dev -- --token YOUR_TOKEN --model qwen2.5:27b --pull
 ```
 
 ## Build
@@ -28,5 +28,5 @@ pnpm --filter @noviqai/worker dev -- --token YOUR_TOKEN --model qwen2.5:27b --pu
 ```bash
 pnpm --filter noviq-website build
 pnpm --filter noviq-data build
-pnpm --filter @noviqai/worker build
+pnpm --filter @noviq/worker build
 ```
