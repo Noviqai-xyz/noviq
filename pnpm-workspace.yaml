@@ -3,9 +3,6 @@ packages:
   - website
   - noviq_client
 
-allowBuilds:
-  esbuild: set this to true or false
-
 onlyBuiltDependencies:
   - '@reown/appkit'
   - bufferutil
