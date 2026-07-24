@@ -40,6 +40,11 @@ export const env = {
   // Shared secret for admin-only routes (e.g. seed-worker token provisioning).
   // Leave blank to disable those routes entirely.
   adminSecret: optional("ADMIN_SECRET", ""),
+  // Cosmetic baseline added to the *displayed* online-worker counts (network
+  // stats + data site) so the network doesn't read as empty while bootstrapping.
+  // Display-only: it does NOT create real capacity, so inference still needs a
+  // real worker online. Set to 0 to show true counts.
+  displayWorkerFloor: Math.max(0, Number(optional("DISPLAY_WORKER_FLOOR", "0"))),
   isProd,
   // --- consumer billing (public inference API) ---
   billingEnabled,

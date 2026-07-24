@@ -4,6 +4,7 @@ import { maskToken } from "./auth/tokens.js";
 import { listApiKeys, type ApiKeyRow } from "./auth/api-keys.js";
 import { getConsumerBilling, type ConsumerBilling } from "./billing.js";
 import { registry } from "./registry.js";
+import { env } from "./env.js";
 import {
   getBalance,
   getPayoutAddress,
@@ -157,9 +158,10 @@ export interface NetworkStats {
 
 export function getNetworkStats(): NetworkStats {
   const counts = registry.counts();
+  const floor = env.displayWorkerFloor;
   return {
-    workersOnline: counts.total,
-    nativeOnline: counts.native,
+    workersOnline: counts.total + floor,
+    nativeOnline: counts.native + floor,
     browserOnline: counts.browser,
     jobsInQueue: registry.queuedCount(),
   };

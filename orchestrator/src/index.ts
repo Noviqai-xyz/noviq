@@ -10,8 +10,19 @@ async function main() {
     logger: { level: env.isProd ? "info" : "debug" },
   });
 
+  // Any localhost/127.0.0.1 origin is allowed regardless of port so Vite dev
+  // port bumps (5173 -> 5174 ...) never break the /earn worker flow with a
+  // CORS "Failed to fetch". Real domains are gated by ALLOWED_ORIGINS.
+  const localhostOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
   await app.register(cors, {
-    origin: env.allowedOrigins.length ? env.allowedOrigins : true,
+    origin(origin, cb) {
+      // Non-browser callers (curl, server-to-server) send no Origin header.
+      if (!origin || localhostOrigin.test(origin)) return cb(null, true);
+      if (!env.allowedOrigins.length || env.allowedOrigins.includes(origin)) {
+        return cb(null, true);
+      }
+      cb(null, false);
+    },
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });

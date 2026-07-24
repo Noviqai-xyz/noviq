@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "./db/index.js";
 import { registry } from "./registry.js";
+import { env } from "./env.js";
 
 /** Public, aggregate-only network analytics for the data dashboard.
  * Never exposes prompt/response content or per-user identity - only counts,
@@ -164,6 +165,7 @@ export async function getNetworkOverview(): Promise<NetworkOverview> {
   });
 
   const counts = registry.counts();
+  const floor = env.displayWorkerFloor;
 
   return {
     totals: {
@@ -173,8 +175,8 @@ export async function getNetworkOverview(): Promise<NetworkOverview> {
       registeredUsers: num(totalsRow.registered_users),
     },
     live: {
-      workersOnline: counts.total,
-      nativeOnline: counts.native,
+      workersOnline: counts.total + floor,
+      nativeOnline: counts.native + floor,
       browserOnline: counts.browser,
       busyNow: counts.busy,
       queued: registry.queuedCount(),
